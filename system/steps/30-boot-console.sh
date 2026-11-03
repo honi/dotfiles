@@ -1,4 +1,10 @@
-# Console font and kernel command line: how the console looks during boot.
+# GRUB menu, console font and kernel command line: how the console looks
+# during boot.
+#
+# GRUB menu: hidden, from /etc/default/grub.d/menu.cfg. GRUB waits one second
+# and boots the default entry; pressing Esc in that second shows the menu. Its
+# font can't be enlarged: with Secure Boot, GRUB only loads fonts from its
+# signed image, so at 2880x1920 the menu text is tiny.
 #
 # Console font: Terminus 16x32, from /etc/default/console-setup. The text
 # console (TTYs, and the LUKS passphrase prompt in the initramfs) runs at the
@@ -13,6 +19,9 @@
 #                        printed before the initramfs loads the console font.
 #                        Only added when the newest installed kernel (the one
 #                        GRUB boots next) was built with it (CONFIG_FONT_TER16x32=y).
+
+put_file /etc/default/grub.d/menu.cfg
+if [[ $CHANGED -eq 1 ]]; then needs_grub "GRUB menu"; fi
 
 conf=/etc/default/console-setup
 backup_once "$conf"
@@ -38,20 +47,22 @@ GRUB_CMDLINE_LINUX_DEFAULT="$cmdline"
 EOF
 if [[ $CHANGED -eq 1 ]]; then needs_grub "kernel command line"; fi
 
-# The command line update-grub will use: /etc/default/grub, then the drop-ins
-# in order, as update-grub reads them.
-grub_cmdline_is() {
-  local actual
+# The value update-grub will use for a setting: /etc/default/grub, then the
+# drop-ins in order, as update-grub reads them.
+grub_setting_is() {
+  local name="$1" expected="$2" actual
   actual="$(
     set +eu
     # shellcheck source=/dev/null
     . /etc/default/grub
     # shellcheck source=/dev/null
     for f in /etc/default/grub.d/*.cfg; do [[ -e "$f" ]] && . "$f"; done
-    printf '%s' "$GRUB_CMDLINE_LINUX_DEFAULT"
+    printf '%s' "${!name}"
   )"
-  [[ "$actual" == "$1" ]] || { echo "update-grub would use: \"$actual\"" >&2; return 1; }
+  [[ "$actual" == "$expected" ]] || { echo "update-grub would use $name=\"$actual\"" >&2; return 1; }
 }
 
+verify "GRUB menu hidden" grub_setting_is GRUB_TIMEOUT_STYLE hidden
+verify "GRUB timeout: 1 second" grub_setting_is GRUB_TIMEOUT 1
 verify "console font is Terminus 16x32" grep -qx 'FONTFACE="Terminus"' "$conf"
-verify "kernel command line: $cmdline" grub_cmdline_is "$cmdline"
+verify "kernel command line: $cmdline" grub_setting_is GRUB_CMDLINE_LINUX_DEFAULT "$cmdline"
