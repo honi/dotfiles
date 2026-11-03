@@ -249,6 +249,21 @@ put_file() {
   write_file "$path" "$mode" < "$FILES_DIR$path"
 }
 
+# put_block PATH NAME [MODE]
+# For a file the installer generates and that has no drop-in directory:
+# keeps the block between "# BEGIN NAME" and "# END NAME" in PATH, holding
+# stdin, and leaves the rest of the file alone. The block is replaced if it
+# is there and appended if not.
+put_block() {
+  local path="$1" name="$2" mode="${3:-0644}" body
+  body="$(cat)"
+  write_file "$path" "$mode" < <(
+    awk -v b="# BEGIN $name" -v e="# END $name" \
+      '$0 == b { skip = 1; next } $0 == e { skip = 0; next } !skip' "$path"
+    printf '# BEGIN %s\n%s\n# END %s\n' "$name" "$body" "$name"
+  )
+}
+
 # Copy PATH to PATH.backup before a step replaces it, so the original is at
 # hand if the run fails. An existing backup is the original from an earlier
 # attempt and is kept. Backups are removed when the run finishes.
