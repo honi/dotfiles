@@ -4,7 +4,7 @@ Each host has its own UEFI boot entry, labelled with its hostname. The firmware 
 
 ## Pick one at power-on
 
-The GRUB menu waits three seconds and lists the other host by its hostname, below this host's own entries. Pick it with the arrow keys and Enter.
+The GRUB menu waits three seconds and lists the other host as **Switch host: <hostname>**, below this host's own entries. Pick it with the arrow keys and Enter.
 
 The firmware's boot menu works too: press **F12** and choose the entry with the hostname.
 

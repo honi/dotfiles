@@ -3,10 +3,12 @@
 # GRUB menu entries for the other hosts on this machine: one per UEFI boot
 # entry that boots Debian's shim from an EFI System Partition other than the
 # one mounted at /boot/efi. Each menu entry is labelled like its boot entry
-# and reads the GRUB configuration on that ESP, which boots the other host's
-# default entry. Chainloading doesn't work: with Secure Boot, loading a second
-# shim fails as unsupported, and a chainloaded GRUB can't tell which ESP it
-# came from, so it doesn't find its configuration.
+# ("Switch host: <label>") and reads the GRUB configuration on that ESP,
+# which boots the other host's default entry.
+#
+# Chainloading doesn't work: with Secure Boot, loading a second shim fails as
+# unsupported, and a chainloaded GRUB can't tell which ESP it came from, so it
+# doesn't find its configuration.
 #
 # The ESP is found by its filesystem UUID when update-grub runs. If another
 # host's ESP is formatted again, its entry here points nowhere until
@@ -57,7 +59,7 @@ while IFS=$'\t' read -r label partuuid; do
 
   echo "Found another host: $label on $(readlink -f "$dev")" >&2
   cat <<EOF
-menuentry '$label' --class debian --class os {
+menuentry 'Switch host: $label' --class debian --class os {
 	search --no-floppy --fs-uuid --set=root $uuid
 	configfile /EFI/debian/grub.cfg
 }
