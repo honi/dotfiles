@@ -10,7 +10,7 @@
 #   homeConfigurations.base     the base modules only
 #   packages.home-manager       the pinned home-manager command
 #   checks                      builds the base configuration
-#   formatter                   nixfmt, for `nix fmt`
+#   formatter                   nixfmt-tree (nixfmt over every Nix file), for `nix fmt`
 {
   description = "Home configuration: the base modules, and mkHome for overlays";
 
@@ -46,6 +46,6 @@
 
       checks.${system} = nixpkgs.lib.mapAttrs (_: home: home.activationPackage) homeConfigurations;
 
-      formatter.${system} = pkgs.nixfmt;
+      formatter.${system} = pkgs.nixfmt-tree;
     };
 }
