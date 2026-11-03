@@ -31,7 +31,7 @@ if [[ ! -s "$KEY_FILE" ]]; then
   install -d -m 0700 "$(dirname "$KEY_FILE")"
   tmp="$(mktemp "$KEY_FILE.XXXXXX")"
   trap 'rm -f "$tmp"' EXIT
-  bw_unlock
+  bw_unlock "read the note $repo-age-key"
   bw_note "$repo-age-key" > "$tmp"
   bw_lock
   key_matches "$tmp" || fail "the note $repo-age-key doesn't match $RECIPIENTS"

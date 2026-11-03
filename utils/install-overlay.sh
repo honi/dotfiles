@@ -36,7 +36,7 @@ url="git@github.com:${slug%.git}.git"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
-bw_unlock
+bw_unlock "read the note $repo-deploy-key"
 (umask 077; bw_note "$repo-deploy-key" > "$tmp/key")
 bw_lock
 # ssh needs a final newline after the key; notes may lack one.
