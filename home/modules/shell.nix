@@ -37,7 +37,7 @@
     initExtra = ''
       PROMPT_DIRTRIM=3
       __set_prompt() {
-        local grey='\[\e[38;5;245m\]' light='\[\e[38;5;251m\]' yellow='\[\e[33m\]' purple='\[\e[38;2;189;147;249m\]'
+        local grey='\[\e[38;5;245m\]' light='\[\e[38;5;251m\]' yellow='\[\e[33m\]' purple='\[\e[1;38;2;189;147;249m\]'
         local reset='\[\e[0m\]' title= branch= ahead= behind= dirty= line= git= counts= color=
         case "$TERM" in
           xterm*|rxvt*|foot*) title='\[\e]0;\u@\h: \w\a\]' ;;
