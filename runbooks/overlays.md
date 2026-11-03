@@ -59,13 +59,13 @@ The overlay's `home/flake.nix` is the host's home configuration, and its `flake.
 
 Secrets are whole files under `$HOME`, stored encrypted in the overlay and decrypted into place as plain files only you can read.
 
-- **Add or update:** `~/dotfiles/secrets/add.sh <file>...` encrypts the files, commits them with `secrets/recipient.txt` (and nothing else staged in the overlay), and pushes. If the push fails, the commit stays for you to push later.
+- **Add or update:** `~/dotfiles/secrets/add.sh <file>...` encrypts each file and commits it on its own, and pushes at the end. The first commit also carries any change to `secrets/recipient.txt`; nothing else staged in the overlay is committed. If the push fails, the commits stay for you to push later.
 - **Apply:** `~/dotfiles/secrets/setup.sh` writes every secret whose content differs. A file changed in `$HOME` since it was last written is kept, with a warning: save it with `add.sh`, or delete it and run `setup.sh` again for the overlay's version.
 - **Remove:** delete `secrets/files/<path>.age` from the overlay and commit; the file in `$HOME` stays until you delete it.
 
 ### Rotate the age key
 
 1. `age-keygen`, as above. Replace the Bitwarden note `<repo>-age-key`, and add the new public key as a second line of `secrets/recipient.txt`.
-2. Re-encrypt every secret to both keys: `~/dotfiles/secrets/add.sh` with every secret's file in `$HOME`, in one call. It commits the new `recipient.txt` with them.
+2. Re-encrypt every secret to both keys: `~/dotfiles/secrets/add.sh` with every secret's file in `$HOME`. The new `recipient.txt` goes in with the first secret's commit.
 3. Put the new key in `~/.config/age/key.txt` (or delete the file and run `secrets/setup.sh`, which fetches the note).
 4. Remove the old public key from `secrets/recipient.txt` and run `add.sh` on every secret again.
