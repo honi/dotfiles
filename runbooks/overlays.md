@@ -53,7 +53,7 @@ The overlay's `home/flake.nix` is the host's home configuration, and its `flake.
 
 - **Change the overlay's modules:** edit, then `~/dotfiles/home/setup.sh`.
 - **Try an uncommitted change to this repo:** `~/dotfiles/home/setup.sh --local`. Nix warns that it won't write that base to the overlay's `flake.lock`.
-- **Keep a change to this repo:** commit and push it, then `~/dotfiles/utils/overlay-flake-update.sh` pins the overlay to the latest commit on GitHub, commits the overlay's `flake.lock`, applies, and pushes the overlay. It never pushes this repo; when this checkout's HEAD isn't the commit it pinned, it warns.
+- **Keep a change to this repo:** commit and push it, then `~/dotfiles/utils/overlay-flake-update.sh` pins the overlay to the latest commit on GitHub, commits the overlay's `flake.lock`, pushes the overlay, and applies. It never pushes this repo; when this checkout's HEAD isn't the commit it pinned, it warns.
 
 ## Secrets
 

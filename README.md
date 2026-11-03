@@ -37,7 +37,7 @@ secrets/
 utils/
   create-overlay-keys.sh    generates a new overlay's deploy and age keys
   install-overlay.sh        clones an overlay with its deploy key from Bitwarden
-  overlay-flake-update.sh   pins the overlay to this repo's latest commit on GitHub, applies, pushes the overlay
+  overlay-flake-update.sh   pins the overlay to this repo's latest commit on GitHub, pushes the overlay, applies
   bitwarden.sh              Bitwarden CLI helpers for the scripts
 ```
 
