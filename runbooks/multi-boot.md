@@ -45,3 +45,13 @@ sudo reboot
 ## When the order changes
 
 GRUB and shim upgrades don't touch the entries, and running the system setup again keeps an existing entry where it is. The order changes only when the setup creates an entry, after a reinstall or a hostname change. Set it again after that.
+
+## TPM warning when switching
+
+After **Switch host**, this may flash on screen just before the LUKS prompt:
+
+```
+EFI stub: WARNING: Failed to measure data for event 1: 0x800000000000000b
+```
+
+It's harmless. Before starting, the kernel records its command line in the TPM, and GRUB does the same for every command and file it reads. A switch runs two GRUB configurations, so the firmware's TPM event log can run out of room. `0x800000000000000b` is `EFI_VOLUME_FULL`: the value still went into the TPM, but its entry didn't fit in the log. Nothing here uses the TPM. It would matter only for unlocking LUKS through the TPM or for remote attestation, and then only on boots that went through **Switch host**.
