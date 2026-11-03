@@ -33,6 +33,7 @@ secrets/
   setup.sh                  decrypts the overlay's secrets into $HOME
   add.sh                    encrypts files from $HOME into the overlay
 utils/
+  create-overlay-keys.sh    generates a new overlay's deploy and age keys
   install-overlay.sh        clones an overlay with its deploy key from Bitwarden
   pin-base.sh               pushes this repo, pins the overlay to it, applies, pushes the overlay
   bitwarden.sh              Bitwarden CLI helpers for the scripts

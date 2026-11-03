@@ -24,25 +24,10 @@ Each overlay has two keys, stored as Bitwarden secure notes named after the repo
 
 ## Create an overlay
 
-On any computer with `ssh-keygen` and `age`:
+On any computer with this repository, `ssh-keygen` and `age`:
 
 1. Create the private repository on GitHub, with the layout above.
-2. Keys: set `REPO` to the repository name, then paste the whole block. It prints both keys and writes no files.
-
-   ```
-   REPO=<repo>
-   d="$(mktemp -d)"
-   ssh-keygen -q -t ed25519 -N '' -C "$REPO-deploy-key" -f "$d/key"
-   echo "== GitHub → $REPO → Settings → Deploy keys → Add deploy key, write access off:"
-   cat "$d/key.pub"
-   echo "== Bitwarden: new secure note $REPO-deploy-key, the whole key as its content:"
-   cat "$d/key"
-   rm -rf "$d"
-   echo "== Bitwarden: new secure note $REPO-age-key, the whole output as its content:"
-   age-keygen
-   ```
-
-   Put the `age1…` public key (from the `# public key:` line) in the overlay's `secrets/recipient.txt` and commit it.
+2. Keys: `utils/create-overlay-keys.sh` asks for the repository and prints both keys, each under a header saying where it goes. It writes no files.
 
 3. Home configuration: `home/flake.nix` with this repo as its only input, and `home/modules/default.nix`. Once the overlay is installed, `~/dotfiles/utils/pin-base.sh` writes and commits its `home/flake.lock`.
 
