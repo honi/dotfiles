@@ -16,6 +16,7 @@
     ./shell.nix
     ./git.nix
     ./lazygit.nix
+    ./neovim.nix
     ./direnv.nix
     ./disk-space-check.nix
     ./suspend-check.nix
