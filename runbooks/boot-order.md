@@ -4,7 +4,11 @@ Each host has its own UEFI boot entry, labelled with its hostname. The firmware 
 
 ## Pick one at power-on
 
-Press **F12** and choose the entry with the hostname.
+The GRUB menu waits three seconds and lists the other host by its hostname, below this host's own entries. Pick it with the arrow keys and Enter.
+
+The firmware's boot menu works too: press **F12** and choose the entry with the hostname.
+
+The GRUB menu finds the other host when `update-grub` runs. After the other host is reinstalled, its ESP is formatted again, and the entry points nowhere until `sudo update-grub` runs on this host. The other host also needs its own boot entry: it's listed only once its system setup has run.
 
 ## See the entries
 

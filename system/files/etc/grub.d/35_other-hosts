@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+#
+# GRUB menu entries for the other hosts on this machine: one per UEFI boot
+# entry that boots Debian's shim from an EFI System Partition other than the
+# one mounted at /boot/efi. Each menu entry is labelled like its boot entry
+# and reads the GRUB configuration on that ESP, which boots the other host's
+# default entry. Chainloading doesn't work: with Secure Boot, loading a second
+# shim fails as unsupported, and a chainloaded GRUB can't tell which ESP it
+# came from, so it doesn't find its configuration.
+#
+# The ESP is found by its filesystem UUID when update-grub runs. If another
+# host's ESP is formatted again, its entry here points nowhere until
+# update-grub runs again on this host.
+#
+# Prints nothing when it can't read the boot entries (not booted in UEFI
+# mode, or no efibootmgr), so update-grub never fails because of it.
+set -uo pipefail
+
+shim='\EFI\debian\shimx64.efi'
+
+[[ -d /sys/firmware/efi/efivars ]] || exit 0
+command -v efibootmgr >/dev/null || exit 0
+
+own_partuuid=""
+own_esp="$(findmnt -no SOURCE --mountpoint /boot/efi 2>/dev/null)" \
+  && own_partuuid="$(lsblk -dno PARTUUID "$own_esp" 2>/dev/null)"
+
+listing="$(efibootmgr -v 2>/dev/null)" || exit 0
+
+# LABEL<TAB>PARTUUID for each entry that boots the shim, from lines like
+#   Boot0001* host	HD(4,GPT,<partuuid>,0x800,0x200000)/File(\EFI\debian\shimx64.efi)
+entries="$(SHIM="$shim" awk '
+  /^Boot[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\*? / {
+    rest = substr($0, index($0, " ") + 1)
+    tab = index(rest, "\t")
+    if (!tab) next
+    label = substr(rest, 1, tab - 1)
+    path = tolower(substr(rest, tab + 1))
+    if (!index(path, "/file(" tolower(ENVIRON["SHIM"]) ")")) next
+    if (!match(path, /hd\([0-9]+,gpt,[0-9a-f-]+,/)) next
+    split(substr(path, RSTART, RLENGTH), hd, ",")
+    print label "\t" hd[3]
+  }' <<<"$listing")"
+
+seen=" "
+while IFS=$'\t' read -r label partuuid; do
+  [[ -n "$partuuid" && "$partuuid" != "${own_partuuid,,}" ]] || continue
+  [[ "$seen" != *" $partuuid "* ]] || continue
+  seen+="$partuuid "
+  # Labels go inside single quotes in grub.cfg.
+  [[ "$label" =~ ^[A-Za-z0-9][A-Za-z0-9._\ -]*$ ]] || continue
+  dev="/dev/disk/by-partuuid/$partuuid"
+  [[ -e "$dev" ]] || continue
+  [[ "$(lsblk -dno PARTTYPE "$dev" 2>/dev/null)" == c12a7328-f81f-11d2-ba4b-00a0c93ec93b ]] || continue
+  uuid="$(lsblk -dno UUID "$dev" 2>/dev/null)"
+  [[ -n "$uuid" ]] || continue
+
+  echo "Found another host: $label on $(readlink -f "$dev")" >&2
+  cat <<EOF
+menuentry '$label' --class debian --class os {
+	search --no-floppy --fs-uuid --set=root $uuid
+	configfile /EFI/debian/grub.cfg
+}
+EOF
+done <<<"$entries"
