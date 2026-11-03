@@ -20,10 +20,6 @@
 #   loglevel=3           also hides warnings, showing only errors and worse on
 #                        screen; everything still goes to the kernel log
 #                        (journalctl -k)
-#   fbcon=font:TER16x32  the kernel's built-in Terminus 16x32 for messages
-#                        printed before the initramfs loads the console font.
-#                        Only added when the newest installed kernel (the one
-#                        GRUB boots next) was built with it (CONFIG_FONT_TER16x32=y).
 
 put_file /etc/default/grub.d/menu.cfg
 if [[ $CHANGED -eq 1 ]]; then needs_grub "GRUB menu"; fi
@@ -43,12 +39,6 @@ if [[ $CHANGED -eq 1 ]]; then
 fi
 
 cmdline="quiet loglevel=3"
-newest_config="$(printf '%s\n' /boot/config-* | sort -V | tail -n 1)"
-if grep -q '^CONFIG_FONT_TER16x32=y' "$newest_config" 2>/dev/null; then
-  cmdline="$cmdline fbcon=font:TER16x32"
-else
-  warn "newest kernel ($newest_config) lacks the built-in Terminus font; skipping fbcon=font"
-fi
 
 write_file /etc/default/grub.d/cmdline.cfg <<EOF
 GRUB_CMDLINE_LINUX_DEFAULT="$cmdline"
