@@ -53,7 +53,7 @@ The setups are idempotent: change the repo or the overlay, then run the setup to
 | Try uncommitted base home changes | `home/setup.sh --local` |
 | Pin the overlay to the base's latest commit | commit here, then `utils/pin-base.sh` |
 | Apply secrets | `secrets/setup.sh` |
-| Add or update a secret | `secrets/add.sh <file>...`, then commit the overlay |
+| Add or update a secret | `secrets/add.sh <file>...` (commits and pushes the overlay) |
 | Update nixpkgs and Home Manager | `nix flake update --flake ./home`, commit, then `utils/pin-base.sh` |
 | Check the home configuration | `nix flake check ./home`, and `nix flake check ./overlay/home` |
 | Format Nix files | `cd home && nix fmt -- flake.nix modules/*.nix` |
