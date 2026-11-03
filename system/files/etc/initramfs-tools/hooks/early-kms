@@ -1,0 +1,12 @@
+#!/bin/sh
+# Loads the GPU driver (xe) in the initramfs, so the console switches to the
+# panel's native mode before the LUKS passphrase prompt, whatever mode the
+# boot loader left the screen in. The driver's firmware comes along with it.
+PREREQ=""
+prereqs() { echo "$PREREQ"; }
+case "$1" in
+  prereqs) prereqs; exit 0 ;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions
+force_load xe

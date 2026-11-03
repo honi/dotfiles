@@ -5,7 +5,11 @@
 # then GRUB boots the default entry. GRUB's font can't be enlarged (with
 # Secure Boot it only loads fonts from its signed image), so the menu is drawn
 # at 1024x768 and the panel scales it up, stretched to 3:2. The firmware
-# doesn't offer half the native mode. Linux is started at the native 2880x1920.
+# doesn't offer half the native mode.
+#
+# GPU driver in the initramfs, from /etc/initramfs-tools/hooks/early-kms: it
+# switches the console to the native 2880x1920 before the LUKS passphrase
+# prompt. Without it, the prompt stays in the mode GRUB drew its menu in.
 #
 # Console font: Terminus 16x32, from /etc/default/console-setup. The text
 # console (TTYs, and the LUKS passphrase prompt in the initramfs) runs at the
@@ -23,6 +27,9 @@
 
 put_file /etc/default/grub.d/menu.cfg
 if [[ $CHANGED -eq 1 ]]; then needs_grub "GRUB menu"; fi
+
+put_file /etc/initramfs-tools/hooks/early-kms 0755
+if [[ $CHANGED -eq 1 ]]; then needs_initramfs "GPU driver in the initramfs"; fi
 
 conf=/etc/default/console-setup
 backup_once "$conf"
@@ -66,6 +73,6 @@ grub_setting_is() {
 verify "GRUB menu shown" grub_setting_is GRUB_TIMEOUT_STYLE menu
 verify "GRUB timeout: 3 seconds" grub_setting_is GRUB_TIMEOUT 3
 verify "GRUB menu at 1024x768" grub_setting_is GRUB_GFXMODE 1024x768,auto
-verify "Linux starts at 2880x1920" grub_setting_is GRUB_GFXPAYLOAD_LINUX 2880x1920,keep
+verify "GPU driver hook for the initramfs is executable" test -x /etc/initramfs-tools/hooks/early-kms
 verify "console font is Terminus 16x32" grep -qx 'FONTFACE="Terminus"' "$conf"
 verify "kernel command line: $cmdline" grub_setting_is GRUB_CMDLINE_LINUX_DEFAULT "$cmdline"
