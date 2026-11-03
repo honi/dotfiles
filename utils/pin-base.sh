@@ -1,33 +1,44 @@
 #!/usr/bin/env bash
 #
-# Pin the overlay to this repo's current commit, apply the home
+# Pin the overlay to the base's latest commit on GitHub, apply the home
 # configuration, and push the overlay.
 #
 #   utils/pin-base.sh
 #
-# The overlay's home/flake.lock pins the base at a commit on GitHub, so the
-# commit has to be pushed first: this refuses uncommitted changes, pushes,
-# updates the overlay's dotfiles input to the pushed commit, and commits the
-# overlay's flake.lock if it changed. The overlay is pushed only once the
-# configuration applies, so a pin that fails never leaves this host.
+# The overlay's home/flake.lock pins the base as fetched from GitHub, so only
+# pushed commits can be pinned; this repo's checkout isn't read or pushed.
+# When its HEAD isn't the commit pinned, that's reported: push it (or pull)
+# and run this again to pin it. The overlay's flake.lock is committed if it
+# changed, and the overlay is pushed only once the configuration applies, so
+# a pin that fails never leaves this host.
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 overlay="$root/overlay"
+lock="$overlay/home/flake.lock"
+
+warn() { printf '\033[1;33mwarning: %s\033[0m\n' "$*" >&2; }
 
 [[ -f "$overlay/home/flake.nix" ]] || { echo "no overlay home flake in $overlay/home" >&2; exit 1; }
-[[ -z "$(git -C "$root" status --porcelain)" ]] || { echo "$root has uncommitted changes; commit them first" >&2; exit 1; }
-
-git -C "$root" push
-commit="$(git -C "$root" rev-parse --short HEAD)"
 
 nix flake update dotfiles --flake "$overlay/home"
+pinned="$(nix eval --raw --impure --expr \
+  "let l = builtins.fromJSON (builtins.readFile $lock); in l.nodes.\${l.nodes.root.inputs.dotfiles}.locked.rev")"
+short="${pinned:0:7}"
+
+local_head="$(git -C "$root" rev-parse HEAD)"
+if [[ "$local_head" != "$pinned" ]]; then
+  warn "pinned $short from GitHub, but $root is at ${local_head:0:7}; push or pull it, then run this again to pin it"
+fi
+if [[ -n "$(git -C "$root" status --porcelain)" ]]; then
+  warn "$root has uncommitted changes; they aren't part of the pin"
+fi
 
 if [[ -z "$(git -C "$overlay" status --porcelain -- home/flake.lock)" ]]; then
-  echo "overlay already pins base $commit"
+  echo "overlay already pins base $short"
 else
   git -C "$overlay" add home/flake.lock
-  git -C "$overlay" commit -m "Pin base $commit" -- home/flake.lock
+  git -C "$overlay" commit -m "Pin base $short" -- home/flake.lock
 fi
 
 "$root/home/setup.sh"
