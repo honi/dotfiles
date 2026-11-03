@@ -37,7 +37,7 @@ secrets/
 utils/
   create-overlay-keys.sh    generates a new overlay's deploy and age keys
   install-overlay.sh        clones an overlay with its deploy key from Bitwarden
-  pin-base.sh               pins the overlay to this repo's latest commit on GitHub, applies, pushes the overlay
+  overlay-flake-update.sh   pins the overlay to this repo's latest commit on GitHub, applies, pushes the overlay
   bitwarden.sh              Bitwarden CLI helpers for the scripts
 ```
 
@@ -51,10 +51,10 @@ The setups are idempotent: change the repo or the overlay, then run the setup to
 | Run some steps only | `system/setup.sh <step>...` |
 | Apply home changes | `home/setup.sh` |
 | Try uncommitted base home changes | `home/setup.sh --local` |
-| Pin the overlay to the base's latest commit | commit and push here, then `utils/pin-base.sh` |
+| Pin the overlay to the base's latest commit | commit and push here, then `utils/overlay-flake-update.sh` |
 | Apply secrets | `secrets/setup.sh` |
 | Add or update a secret | `secrets/add.sh <file>...` (commits and pushes the overlay) |
-| Update nixpkgs and Home Manager | `nix flake update --flake ./home`, commit, push, then `utils/pin-base.sh` |
+| Update nixpkgs and Home Manager | `nix flake update --flake ./home`, commit, push, then `utils/overlay-flake-update.sh` |
 | Check the home configuration | `nix flake check ./home`, and `nix flake check ./overlay/home` |
 | Format Nix files | `cd home && nix fmt -- flake.nix modules/*.nix` |
 | List home generations | `nix run ./home#home-manager -- generations` |

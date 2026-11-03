@@ -3,7 +3,7 @@
 # Pin the overlay to the base's latest commit on GitHub, apply the home
 # configuration, and push the overlay.
 #
-#   utils/pin-base.sh
+#   utils/overlay-flake-update.sh
 #
 # The overlay's home/flake.lock pins the base as fetched from GitHub, so only
 # pushed commits can be pinned; this repo's checkout isn't read or pushed.

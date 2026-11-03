@@ -29,7 +29,7 @@ On any computer with this repository, `ssh-keygen` and `age`:
 1. Create the private repository on GitHub, with the layout above.
 2. Keys: `utils/create-overlay-keys.sh` asks for the repository and prints both keys, each under a header saying where it goes. It writes no files.
 
-3. Home configuration: `home/flake.nix` with this repo as its only input, and `home/modules/default.nix`. Once the overlay is installed, `~/dotfiles/utils/pin-base.sh` writes and commits its `home/flake.lock`.
+3. Home configuration: `home/flake.nix` with this repo as its only input, and `home/modules/default.nix`. Once the overlay is installed, `~/dotfiles/utils/overlay-flake-update.sh` writes and commits its `home/flake.lock`.
 
    ```nix
    {
@@ -53,7 +53,7 @@ The overlay's `home/flake.nix` is the host's home configuration, and its `flake.
 
 - **Change the overlay's modules:** edit, then `~/dotfiles/home/setup.sh`.
 - **Try an uncommitted change to this repo:** `~/dotfiles/home/setup.sh --local`. Nix warns that it won't write that base to the overlay's `flake.lock`.
-- **Keep a change to this repo:** commit and push it, then `~/dotfiles/utils/pin-base.sh` pins the overlay to the latest commit on GitHub, commits the overlay's `flake.lock`, applies, and pushes the overlay. It never pushes this repo; when this checkout's HEAD isn't the commit it pinned, it warns.
+- **Keep a change to this repo:** commit and push it, then `~/dotfiles/utils/overlay-flake-update.sh` pins the overlay to the latest commit on GitHub, commits the overlay's `flake.lock`, applies, and pushes the overlay. It never pushes this repo; when this checkout's HEAD isn't the commit it pinned, it warns.
 
 ## Secrets
 
