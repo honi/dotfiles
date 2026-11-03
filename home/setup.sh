@@ -11,7 +11,8 @@
 # configuration. --local swaps the pinned base for this checkout, committed or
 # not, for this run only (Nix warns that it won't write that to the overlay's
 # flake.lock). Files it would replace that it didn't write are kept with a
-# .backup suffix.
+# .backup suffix. From a terminal, it ends by replacing itself with a login
+# shell, the configured one, so the new environment applies.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
@@ -26,4 +27,10 @@ else
   config=base
 fi
 
-exec nix run "$flake#home-manager" -- switch --flake "$flake#$config" -b backup "${args[@]}"
+nix run "$flake#home-manager" -- switch --flake "$flake#$config" -b backup "${args[@]}"
+
+if [[ -t 0 && -t 1 ]]; then
+  shell_package="$flake#homeConfigurations.$config.config.programs.bash.package"
+  shell="$(nix eval --raw "$shell_package")/bin/$(nix eval --raw "$shell_package.meta.mainProgram")"
+  exec "$shell" -l
+fi
