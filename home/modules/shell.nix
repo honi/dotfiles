@@ -27,15 +27,39 @@
     };
 
     # Prompt: the hostname and the last three directories in grey, as
-    # host:dir, then a Dracula purple (#bd93f9) ">". PROMPT_DIRTRIM keeps \w
-    # to three components (the rest shows as "..."). The terminal title is
-    # set to user@host: dir.
+    # host:dir, then in a git repository "(branch)", then a Dracula purple
+    # (#bd93f9) ">". The branch is yellow while files are changed or
+    # untracked, and carries "+N" for commits not pushed and "-N" for commits
+    # not pulled, as of the last fetch (the prompt never touches the network).
+    # PROMPT_DIRTRIM keeps \w to three components (the rest shows as "...").
+    # The terminal title is set to user@host: dir.
     initExtra = ''
       PROMPT_DIRTRIM=3
-      PS1='\[\e[38;5;245m\]\h:\w\[\e[0m\] \[\e[38;2;189;147;249m\]>\[\e[0m\] '
-      case "$TERM" in
-        xterm*|rxvt*|foot*) PS1="\[\e]0;\u@\h: \w\a\]$PS1" ;;
-      esac
+      __set_prompt() {
+        local grey='\[\e[38;5;245m\]' yellow='\[\e[33m\]' purple='\[\e[38;2;189;147;249m\]'
+        local reset='\[\e[0m\]' title= branch= ahead= behind= dirty= line= git= counts= color=
+        case "$TERM" in
+          xterm*|rxvt*|foot*) title='\[\e]0;\u@\h: \w\a\]' ;;
+        esac
+        while read -r line; do
+          case "$line" in
+            "# branch.head "*) branch=''${line#\# branch.head } ;;
+            "# branch.ab "*) read -r ahead behind <<< "''${line#\# branch.ab }" ;;
+            "#"*) ;;
+            *) dirty=1 ;;
+          esac
+        done < <(GIT_OPTIONAL_LOCKS=0 git status --porcelain=v2 --branch 2>/dev/null)
+        if [ -n "$branch" ]; then
+          [ "$branch" = "(detached)" ] && branch=$(git rev-parse --short HEAD 2>/dev/null)
+          [ -n "$ahead" ] && [ "$ahead" != "+0" ] && counts=$ahead
+          [ -n "$behind" ] && [ "$behind" != "-0" ] && counts="$counts''${counts:+/}$behind"
+          color=$grey
+          [ -n "$dirty" ] && color=$yellow
+          git=" $color($branch''${counts:+ $counts})$reset"
+        fi
+        PS1="$title$grey\h:\w$reset$git $purple>$reset "
+      }
+      PROMPT_COMMAND="__set_prompt''${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
     '';
   };
 
