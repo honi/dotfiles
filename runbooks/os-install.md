@@ -1,6 +1,6 @@
 # OS install
 
-The laptop holds two Debian 13 (trixie) installs on the same disk, fully isolated from each other. Each install uses one overlay. Install the first one completely before starting the second.
+The laptop holds two Debian 13 (trixie) hosts on the same disk, fully isolated from each other. Each host uses one overlay. Install the first one completely before starting the second.
 
 ## Preamble
 
@@ -37,7 +37,7 @@ The Ethernet card works with the stock kernel and is the network for the whole i
 1. Power on, press **F2**. Check that **Secure Boot** is enabled; Debian boots through Microsoft-signed shim. Save and exit.
 2. Plug in Ethernet and the USB stick, power on, press **F12** and pick the USB entry.
 
-F12 is also how you switch between installs later: each has its own UEFI boot entry, labelled with its hostname. To change which one boots by default, see [boot-order.md](boot-order.md).
+F12 is also how you switch between hosts later: each has its own UEFI boot entry, labelled with its hostname. To change which one boots by default, see [boot-order.md](boot-order.md).
 
 ## Debian installer
 
@@ -51,16 +51,16 @@ Only the screens where the answer isn't the default.
 | Keyboard | American English |
 | Missing firmware (iwlwifi) | **No**: the installer kernel can't drive this card anyway |
 | Primary network interface | the wired `enx…` interface |
-| Hostname | different per install; domain empty |
+| Hostname | different per host; domain empty |
 | Root password | **empty**: disables root login and gives your user `sudo` |
 | Partitioning | see below; for a reinstall, see [Reinstallation](#reinstallation) |
 | Software selection | untick **Debian desktop environment** and **GNOME**; keep **standard system utilities**; tick **SSH server** |
 
 ### Disk layout
 
-Each install is three partitions: ESP, `/boot`, and a LUKS container holding an LVM volume group. The first install creates the partition table and takes the start of the disk; the second takes what's left.
+Each host is three partitions: ESP, `/boot`, and a LUKS container holding an LVM volume group. The first host creates the partition table and takes the start of the disk; the second takes what's left.
 
-| | First install | Second install |
+| | First host | Second host |
 | --- | --- | --- |
 | ESP | p1, 1 GB | p4, 1 GB |
 | `/boot` | p2, 2 GB | p5, 2 GB |
@@ -80,27 +80,27 @@ Pick a name for each volume group in place of `<vg1>` and `<vg2>`. Every volume 
 
 Encryption: keep the defaults, except **Erase data: No**.
 
-### Partitioning: first install
+### Partitioning: first host
 
 1. **Partition disks → Manual.**
 2. Select the disk (`nvme0n1`, the line with the size) → **Create new empty partition table** → Yes.
 3. FREE SPACE → Create a new partition → `1 GB` → Beginning → Use as: **EFI System Partition** → Done.
 4. FREE SPACE → Create → `2 GB` → Beginning → Use as: **Ext4** → Mount point: `/boot` → Done.
 5. FREE SPACE → Create → `1200 GB` → Beginning → Use as: **physical volume for encryption** → Erase data: **No** → Done.
-6. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only `/dev/nvme0n1p3` → Finish → enter this install's passphrase twice.
+6. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only `/dev/nvme0n1p3` → Finish → enter this host's passphrase twice.
 7. **Configure the Logical Volume Manager** → Yes → Create volume group → `<vg1>` → select `/dev/mapper/nvme0n1p3_crypt`.
 8. Create logical volume → `<vg1>` → each LV from the table, name and size → Finish.
 9. Select the partition under each LV and set it up from the table (Use as, mount point, reserved blocks).
 10. **Finish partitioning and write changes to disk** → Yes. The rest of the disk stays as FREE SPACE.
 
-### Partitioning: second install
+### Partitioning: second host
 
 1. **Partition disks → Manual.** Don't create a new partition table. The FREE SPACE below is the large one at the end of the disk, not the ~1 MB gap at the start.
-2. Select the first install's ESP (#1, shown as `K  ESP`: the installer picks it up automatically) → Use as: **do not use** → Done. Leave its `/boot` and LUKS partitions as they are.
+2. Select the first host's ESP (#1, shown as `K  ESP`: the installer picks it up automatically) → Use as: **do not use** → Done. Leave its `/boot` and LUKS partitions as they are.
 3. FREE SPACE → Create a new partition → `1 GB` → Beginning → Use as: **EFI System Partition** → Done.
 4. FREE SPACE → Create → `2 GB` → Beginning → Use as: **Ext4** → Mount point: `/boot` → Done.
 5. FREE SPACE → Create → all remaining space → Use as: **physical volume for encryption** → Erase data: **No** → Done.
-6. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only `/dev/nvme0n1p6` → Finish → enter this install's passphrase twice.
+6. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only `/dev/nvme0n1p6` → Finish → enter this host's passphrase twice.
 7. **Configure the Logical Volume Manager** → Yes → Create volume group → `<vg2>` → select `/dev/mapper/nvme0n1p6_crypt`.
 8. Create logical volume → `<vg2>` → each LV from the table → Finish.
 9. Select the partition under each LV and set it up from the table.
@@ -122,7 +122,7 @@ To work from another computer: `ip -4 addr` shows the `enx…` address, then `ss
    exec bash -l                        # a new login shell, with the Nix programs on PATH
    ```
 
-   Do this after each install, before starting the next one. If the system setup stops at a failing step, fix the cause and run it again: it resumes at that step. After the reboot the laptop shows the login screen; don't log in there yet, do it over SSH or on a text console (Ctrl+Alt+F3).
+   Do this on each host before installing the next one. If the system setup stops at a failing step, fix the cause and run it again: it resumes at that step. After the reboot the laptop shows the login screen; don't log in there yet, do it over SSH or on a text console (Ctrl+Alt+F3).
 
 2. Install the overlay and apply it:
 
@@ -139,20 +139,20 @@ To work from another computer: `ip -4 addr` shows the `enx…` address, then `ss
 
 ### Reinstall one
 
-Replaces one install and keeps the other.
+Replaces one host and keeps the other.
 
 1. Back up anything on it that isn't in this repository or its overlay.
-2. Delete this install's LUKS header backup. With the old passphrase it still decrypts the old data, which stays on the disk.
+2. Delete this host's LUKS header backup. With the old passphrase it still decrypts the old data, which stays on the disk.
 3. Follow [Firmware](#firmware) and [Debian installer](#debian-installer), with the partitioning below, then [First boot](#first-boot).
 
 Partitioning:
 
 1. **Partition disks → Manual.** Don't create a new partition table.
-2. Select the other install's ESP (#4 when reinstalling the first, #1 when reinstalling the second; shown as `K  ESP`, like this install's ESP) → Use as: **do not use** → Done. Leave its `/boot` and LUKS partitions as they are.
-3. This install's ESP (p1 or p4) → Use as: **EFI System Partition** → Done.
-4. This install's `/boot` (p2 or p5) → Use as: **Ext4** → Format: **yes** → Mount point: `/boot` → Done.
-5. This install's LUKS partition (p3 or p6) → Use as: **physical volume for encryption** → Erase data: **No** → Done.
-6. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only this install's (`/dev/nvme0n1p3` or `/dev/nvme0n1p6`) → Finish → enter a new passphrase twice.
+2. Select the other host's ESP (#4 when reinstalling the first, #1 when reinstalling the second; shown as `K  ESP`, like this host's ESP) → Use as: **do not use** → Done. Leave its `/boot` and LUKS partitions as they are.
+3. This host's ESP (p1 or p4) → Use as: **EFI System Partition** → Done.
+4. This host's `/boot` (p2 or p5) → Use as: **Ext4** → Format: **yes** → Mount point: `/boot` → Done.
+5. This host's LUKS partition (p3 or p6) → Use as: **physical volume for encryption** → Erase data: **No** → Done.
+6. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only this host's (`/dev/nvme0n1p3` or `/dev/nvme0n1p6`) → Finish → enter a new passphrase twice.
 7. **Configure the Logical Volume Manager** → Yes → Create volume group → its VG (`<vg1>` or `<vg2>`) → select its `/dev/mapper/…_crypt`.
 8. Create logical volume → the VG → each LV from the table → Finish.
 9. Select the partition under each LV and set it up from the table.
@@ -160,14 +160,14 @@ Partitioning:
 
 ### Reinstall both
 
-Back up both installs and delete both LUKS header backups. Then install from scratch: the first install creates a new partition table, which removes everything on the disk.
+Back up both hosts and delete both LUKS header backups. Then install from scratch: the first host creates a new partition table, which removes everything on the disk.
 
 ### Boot entries
 
-The system setup gives each install a UEFI boot entry labelled with its hostname, and deletes the `debian` entry the installer creates. After a reinstall:
+The system setup gives each host a UEFI boot entry labelled with its hostname, and deletes the `debian` entry the installer creates. After a reinstall:
 
-- **One install, same hostname:** nothing to do. Its ESP is the same partition as before, so the setup keeps its entry and only deletes the installer's `debian` entry.
-- **One install, new hostname:** the setup creates an entry for the new hostname, and the entry with the old one still boots the same ESP. Delete the old one.
-- **Both installs:** the entries from before carry the hostnames but point at the old partitions. When the new install has the same hostname as before, the system setup stops at its old entry. Delete the old entries and run the setup again.
+- **One host, same hostname:** nothing to do. Its ESP is the same partition as before, so the setup keeps its entry and only deletes the installer's `debian` entry.
+- **One host, new hostname:** the setup creates an entry for the new hostname, and the entry with the old one still boots the same ESP. Delete the old one.
+- **Both hosts:** the entries from before carry the hostnames but point at the old partitions. When the new host has the same hostname as before, the system setup stops at its old entry. Delete the old entries and run the setup again.
 
 To delete an entry, find its number with `sudo efibootmgr -v` and run `sudo efibootmgr --bootnum <number> --delete-bootnum`.

@@ -16,11 +16,11 @@ Follow [runbooks/os-install.md](runbooks/os-install.md).
 
 ```
 runbooks/
-  os-install.md             install Debian (once per install)
+  os-install.md             install Debian (once per host)
   post-install.md           manual steps after install
   overlays.md               how to create an overlay and manage its secrets
   suspend-check.md          measure battery drain during suspend
-  boot-order.md             pick or change which install boots
+  boot-order.md             pick or change which host boots
 system/
   setup.sh                  runs the base steps, then the overlay's
   lib.sh                    helpers for the steps

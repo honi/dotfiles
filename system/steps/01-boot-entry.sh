@@ -1,6 +1,6 @@
-# This install's UEFI boot entry: labelled with the hostname, and kept that way.
+# This host's UEFI boot entry: labelled with the hostname, and kept that way.
 #
-# Each install boots from its own UEFI entry, labelled with its hostname. The
+# Each host boots from its own UEFI entry, labelled with its hostname. The
 # Debian installer registers the entry as "debian", and by default every
 # grub-efi-amd64 or shim upgrade runs grub-install, which recreates a "debian"
 # entry and moves it first in the boot order. With grub2/update_nvram false,
@@ -8,13 +8,13 @@
 #
 # The entry is created for the ESP mounted at /boot/efi, booting Debian's shim.
 # Then the "debian" entries that boot that same shim are deleted. Entries that
-# boot anything else (another install's ESP, the firmware's own entries) are
+# boot anything else (another host's ESP, the firmware's own entries) are
 # never touched.
 #
 # Anything unexpected stops the step before NVRAM is changed: not booted in
 # UEFI mode, no ESP at /boot/efi or no shim on it, booted from an entry that
-# isn't this install's shim, or an entry with this hostname that boots
-# something else (left from an earlier install with the same hostname).
+# isn't this host's shim, or an entry with this hostname that boots
+# something else (left from an earlier installation with the same hostname).
 
 nvram_off() { debconf-show grub-efi-amd64 | grep -E '^[* ] grub2/update_nvram: false$' >/dev/null; }
 
@@ -25,7 +25,7 @@ else
   log "set grub2/update_nvram to false"
 fi
 
-# --- what this install boots from -------------------------------------------
+# --- what this host boots from ----------------------------------------------
 
 [[ -d /sys/firmware/efi/efivars ]] || fail "not booted in UEFI mode"
 command -v efibootmgr >/dev/null || fail "efibootmgr is not installed"
@@ -55,7 +55,7 @@ log "ESP: $esp (disk $esp_disk, partition $esp_part, PARTUUID $esp_partuuid)"
 # --- reading the entries ----------------------------------------------------
 
 # Print each boot entry as NUMBER<TAB>LABEL<TAB>OURS, where OURS is 1 when the
-# entry boots the shim on this install's ESP (matched by partition number and
+# entry boots the shim on this host's ESP (matched by partition number and
 # PARTUUID, so the same path on another ESP doesn't count).
 boot_entries() {
   local listing
@@ -83,7 +83,7 @@ entry_numbers() {
 
 boot_var() { efibootmgr | awk -v name="$1:" '$1 == name { print $2 }'; }
 
-# The entry with the hostname exists once, boots this install, and is in the
+# The entry with the hostname exists once, boots this host, and is in the
 # boot order.
 hostname_entry_ok() {
   local all ours order
@@ -103,20 +103,20 @@ no_debian_entry() {
 
 # --- checks before changing NVRAM -------------------------------------------
 
-# This boot came through an entry that boots this install's shim. Confirms
-# both that the entries are read correctly and that this is the install whose
+# This boot came through an entry that boots this host's shim. Confirms
+# both that the entries are read correctly and that this is the host whose
 # ESP is mounted.
 current="$(boot_var BootCurrent)"
 ours_all="$(entry_numbers "" 1)"
 [[ -n "$current" ]] || fail "efibootmgr shows no BootCurrent"
 grep -qx "$current" <<<"$ours_all" \
-  || fail "booted from Boot$current, which doesn't boot $loader on $esp; boot this install from its own entry and run again"
+  || fail "booted from Boot$current, which doesn't boot $loader on $esp; boot this host from its own entry and run again"
 
 named="$(entry_numbers "$label" "")"
 named_ours="$(entry_numbers "$label" 1)"
 
 if [[ -n "$named" && "$named" != "$named_ours" ]]; then
-  fail "entry '$label' (Boot$(paste -sd, - <<<"$named")) boots something other than $loader on $esp; check it with efibootmgr -v and delete it if it's left from an earlier install"
+  fail "entry '$label' (Boot$(paste -sd, - <<<"$named")) boots something other than $loader on $esp; check it with efibootmgr -v and delete it if it's left from an earlier installation"
 elif [[ -n "$named" && "$(wc -l <<<"$named")" -gt 1 ]]; then
   fail "several entries are labelled '$label' (Boot$(paste -sd, - <<<"$named")); delete the extra ones with efibootmgr"
 fi

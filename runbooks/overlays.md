@@ -1,6 +1,6 @@
 # Overlays
 
-An overlay is a private repository with what one install adds on top of this base: system steps, home modules, encrypted secrets and its own runbooks. It's cloned into `overlay/` inside this repo, which git ignores, and the setups pick it up from there. Commit and push it from there like any repository; don't run `git clean -x` here, which would delete it. An install has at most one overlay.
+An overlay is a private repository with what one host adds on top of this base: system steps, home modules, encrypted secrets and its own runbooks. It's cloned into `overlay/` inside this repo, which git ignores, and the setups pick it up from there. Commit and push it from there like any repository; don't run `git clean -x` here, which would delete it. A host has at most one overlay.
 
 It has the same layout as this repo, and only holds config and data:
 
@@ -12,15 +12,15 @@ home/flake.lock            pins this repo at a commit, and through it nixpkgs an
 home/modules/default.nix   imported after the base modules
 secrets/recipient.txt      the overlay's age public key
 secrets/files/<path>.age   encrypted copies of $HOME/<path>
-runbooks/*.md              manual steps for this install
+runbooks/*.md              manual steps for this host
 ```
 
 ## Keys
 
 Each overlay has two keys, stored as Bitwarden secure notes named after the repository (`<repo>` is its name, as in `git@github.com:OWNER/<repo>.git`):
 
-- **`<repo>-deploy-key`**: a read-only SSH key for the repository only, so a fresh install can clone it before any of your own keys are on it.
-- **`<repo>-age-key`**: the age key the overlay's secrets are encrypted with. age keys come in pairs: the public key (`age1…`, in `secrets/recipient.txt`, safe to commit) only encrypts; the private key (`AGE-SECRET-KEY-1…`) decrypts. On an install it lives in `~/.config/age/key.txt`.
+- **`<repo>-deploy-key`**: a read-only SSH key for the repository only, so a freshly installed host can clone it before any of your own keys are on it.
+- **`<repo>-age-key`**: the age key the overlay's secrets are encrypted with. age keys come in pairs: the public key (`age1…`, in `secrets/recipient.txt`, safe to commit) only encrypts; the private key (`AGE-SECRET-KEY-1…`) decrypts. On a host it lives in `~/.config/age/key.txt`.
 
 ## Create an overlay
 
@@ -49,7 +49,7 @@ On any computer with this repository, `ssh-keygen` and `age`:
 
 ## Home configuration
 
-The overlay's `home/flake.nix` is the install's home configuration, and its `flake.lock` pins this repo at a commit. Nix only reads files git knows about, so `git add` a new module before running the setup; edits to tracked files apply as they are.
+The overlay's `home/flake.nix` is the host's home configuration, and its `flake.lock` pins this repo at a commit. Nix only reads files git knows about, so `git add` a new module before running the setup; edits to tracked files apply as they are.
 
 - **Change the overlay's modules:** edit, then `~/dotfiles/home/setup.sh`.
 - **Try an uncommitted change to this repo:** `~/dotfiles/home/setup.sh --local`. Nix warns that it won't write that base to the overlay's `flake.lock`.

@@ -1,6 +1,6 @@
 # Post-install
 
-Steps that need a person, a secret or a physical action. Do them once on every install, after the system and home setup.
+Steps that need a person, a secret or a physical action. Do them once on every host, after the system and home setup.
 
 ## Fingerprints
 
@@ -15,7 +15,7 @@ sudo fprintd-enroll -f left-index-finger "$USER"
 
 The header holds the key slots; if it's damaged, the data is lost even with the passphrase. Keep it encrypted (in a password manager, not as a loose file): the backup plus the passphrase at the time unlocks the disk.
 
-This install's LUKS partition is the device behind its mapping in `/etc/crypttab`:
+This host's LUKS partition is the device behind its mapping in `/etc/crypttab`:
 
 ```
 sudo cryptsetup status "$(awk '!/^#/ && NF {print $1; exit}' /etc/crypttab)" | awk '$1 == "device:" {print $2}'

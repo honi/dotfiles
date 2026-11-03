@@ -5,7 +5,7 @@
 #   utils/install-overlay.sh
 #
 # Asks for the overlay's GitHub repository as OWNER/REPO, and clones it from
-# git@github.com:OWNER/REPO.git. The repository is private and this install may have no SSH key yet, so the
+# git@github.com:OWNER/REPO.git. The repository is private and this host may have no SSH key yet, so the
 # clone uses the repository's read-only deploy key, read from the Bitwarden
 # secure note REPO-deploy-key. The key only exists in a temporary directory
 # for the clone. GitHub's host key is pinned, so the first connection doesn't

@@ -9,7 +9,7 @@
 # commit has to be pushed first: this refuses uncommitted changes, pushes,
 # updates the overlay's dotfiles input to the pushed commit, and commits the
 # overlay's flake.lock if it changed. The overlay is pushed only once the
-# configuration applies, so a pin that fails never leaves this install.
+# configuration applies, so a pin that fails never leaves this host.
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

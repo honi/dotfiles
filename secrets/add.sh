@@ -6,7 +6,7 @@
 #
 # Each FILE is encrypted to the overlay's recipient.txt as
 # secrets/files/PATH.age, PATH being FILE relative to $HOME. The result is
-# decrypted again with this install's key and compared with FILE before it
+# decrypted again with this host's key and compared with FILE before it
 # replaces the overlay's copy. Commit the overlay afterwards.
 set -euo pipefail
 
