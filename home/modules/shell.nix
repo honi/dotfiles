@@ -28,15 +28,16 @@
 
     # Prompt: the hostname and the last three directories in grey, as
     # host:dir, then in a git repository "(branch)", then a Dracula purple
-    # (#bd93f9) ">". The branch is yellow while files are changed or
-    # untracked, and carries "+N" for commits not pushed and "-N" for commits
-    # not pulled, as of the last fetch (the prompt never touches the network).
+    # (#bd93f9) ">". The branch carries "+N" for commits not pushed and "-N"
+    # for commits not pulled, as of the last fetch (the prompt never touches
+    # the network). It is yellow while files are changed or untracked, else
+    # light grey with such commits, else the prompt's grey.
     # PROMPT_DIRTRIM keeps \w to three components (the rest shows as "...").
     # The terminal title is set to user@host: dir.
     initExtra = ''
       PROMPT_DIRTRIM=3
       __set_prompt() {
-        local grey='\[\e[38;5;245m\]' yellow='\[\e[33m\]' purple='\[\e[38;2;189;147;249m\]'
+        local grey='\[\e[38;5;245m\]' light='\[\e[38;5;251m\]' yellow='\[\e[33m\]' purple='\[\e[38;2;189;147;249m\]'
         local reset='\[\e[0m\]' title= branch= ahead= behind= dirty= line= git= counts= color=
         case "$TERM" in
           xterm*|rxvt*|foot*) title='\[\e]0;\u@\h: \w\a\]' ;;
@@ -54,6 +55,7 @@
           [ -n "$ahead" ] && [ "$ahead" != "+0" ] && counts=$ahead
           [ -n "$behind" ] && [ "$behind" != "-0" ] && counts="$counts''${counts:+/}$behind"
           color=$grey
+          [ -n "$counts" ] && color=$light
           [ -n "$dirty" ] && color=$yellow
           git=" $color($branch''${counts:+ $counts})$reset"
         fi
