@@ -1,10 +1,11 @@
 # GRUB menu, console font and kernel command line: how the console looks
 # during boot.
 #
-# GRUB menu: hidden, from /etc/default/grub.d/menu.cfg. GRUB waits one second
-# and boots the default entry; pressing Esc in that second shows the menu. Its
-# font can't be enlarged: with Secure Boot, GRUB only loads fonts from its
-# signed image, so at 2880x1920 the menu text is tiny.
+# GRUB menu: shown for three seconds, from /etc/default/grub.d/menu.cfg,
+# then GRUB boots the default entry. GRUB's font can't be enlarged (with
+# Secure Boot it only loads fonts from its signed image), so the menu is drawn
+# at 1024x768 and the panel scales it up, stretched to 3:2. The firmware
+# doesn't offer half the native mode. Linux is started at the native 2880x1920.
 #
 # Console font: Terminus 16x32, from /etc/default/console-setup. The text
 # console (TTYs, and the LUKS passphrase prompt in the initramfs) runs at the
@@ -62,7 +63,9 @@ grub_setting_is() {
   [[ "$actual" == "$expected" ]] || { echo "update-grub would use $name=\"$actual\"" >&2; return 1; }
 }
 
-verify "GRUB menu hidden" grub_setting_is GRUB_TIMEOUT_STYLE hidden
-verify "GRUB timeout: 1 second" grub_setting_is GRUB_TIMEOUT 1
+verify "GRUB menu shown" grub_setting_is GRUB_TIMEOUT_STYLE menu
+verify "GRUB timeout: 3 seconds" grub_setting_is GRUB_TIMEOUT 3
+verify "GRUB menu at 1024x768" grub_setting_is GRUB_GFXMODE 1024x768,auto
+verify "Linux starts at 2880x1920" grub_setting_is GRUB_GFXPAYLOAD_LINUX 2880x1920,keep
 verify "console font is Terminus 16x32" grep -qx 'FONTFACE="Terminus"' "$conf"
 verify "kernel command line: $cmdline" grub_setting_is GRUB_CMDLINE_LINUX_DEFAULT "$cmdline"
