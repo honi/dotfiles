@@ -30,7 +30,5 @@ fi
 nix run "$flake#home-manager" -- switch --flake "$flake#$config" -b backup "${args[@]}"
 
 if [[ -t 0 && -t 1 ]]; then
-  shell_package="$flake#homeConfigurations.$config.config.programs.bash.package"
-  shell="$(nix eval --raw "$shell_package")/bin/$(nix eval --raw "$shell_package.meta.mainProgram")"
-  exec "$shell" -l
+  exec nix run "$flake#homeConfigurations.$config.config.programs.bash.package" -- -l
 fi
