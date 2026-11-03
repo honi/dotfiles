@@ -24,7 +24,7 @@ List every entry from `BootOrder` in the new order, with the install you want fi
 
 ```
 sudo efibootmgr --bootorder <first>,<second>,...
-sudo efibootmgr                # check BootOrder
+sudo efibootmgr # check BootOrder
 ```
 
 The firmware setup (**F2** at power-on) can change the order too.
