@@ -150,11 +150,16 @@ all_installed() {
 verify_installed() { verify "installed: $*" all_installed "$@"; }
 
 # backports_current PKG...: the packages are at the version apt would install
-# with -t trixie-backports (prints what it would still install otherwise).
+# with -t trixie-backports (prints the ones it would still upgrade otherwise).
+# Other packages in apt's plan don't count: it can also upgrade installed
+# packages that weren't named (such as the kernel's linux-libc-dev).
 backports_current() {
   local plan
   plan="$(apt-get -s -t trixie-backports install "$@")" || return 1
-  ! grep '^Inst ' <<<"$plan" >&2
+  awk -v pkgs="$*" '
+    BEGIN { n = split(pkgs, list, " "); for (i = 1; i <= n; i++) named[list[i]] = 1 }
+    $1 == "Inst" && ($2 in named) { print; stale = 1 }
+    END { exit stale }' <<<"$plan" >&2
 }
 
 # backports_candidate PKG: the version apt would install with
