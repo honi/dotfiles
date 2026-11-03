@@ -128,18 +128,7 @@ The initramfs asks for the LUKS passphrase, then you land on a text login. Ether
 
 To work from another computer: `ip -4 addr` shows the `enx…` address, then `ssh <user>@<ip>`.
 
-1. Give the install's UEFI entry its hostname. The installer named it `debian` and the next install would reuse that entry. So do this after each install, before starting the next one.
-
-   ```
-   sudo efibootmgr # note the number of the "debian" entry
-   sudo efibootmgr --create --disk /dev/nvme0n1 --part <1 or 4, the ESP> \
-     --label "$(hostname)" --loader '\EFI\debian\shimx64.efi'
-   sudo efibootmgr --bootnum <number> --delete-bootnum
-   ```
-
-   After reinstalling one install, the entry with its hostname still points at its ESP, so only delete the `debian` entry. After reinstalling both, also delete the entries left from before.
-
-2. Get this repository and apply the base:
+1. Get this repository and apply the base:
 
    ```
    sudo apt install git
@@ -148,10 +137,14 @@ To work from another computer: `ip -4 addr` shows the `enx…` address, then `ss
    ~/dotfiles/home/setup.sh            # after the reboot, from a text console or SSH
    ```
 
+   Do this after each install, before starting the next one: the system setup labels the install's UEFI entry with its hostname and removes the installer's `debian` entry, which the next install would otherwise reuse.
+
    If the system setup stops at a failing step, fix the cause and run it again: it resumes at that step. After the reboot the laptop shows the login screen; don't log in there yet, do it over SSH or on a
    text console (Ctrl+Alt+F3).
 
-3. Install the overlay and apply it:
+   After reinstalling both installs, the system setup stops at the boot entries left from before: they carry the hostnames but point at the old partitions. Check them with `sudo efibootmgr -v`, delete each with `sudo efibootmgr --bootnum <number> --delete-bootnum`, and run the setup again.
+
+2. Install the overlay and apply it:
 
    ```
    ~/dotfiles/utils/install-overlay.sh
@@ -160,4 +153,4 @@ To work from another computer: `ip -4 addr` shows the `enx…` address, then `ss
    ~/dotfiles/secrets/setup.sh
    ```
 
-4. Follow [post-install.md](post-install.md), then the overlay's own `runbooks/`.
+3. Follow [post-install.md](post-install.md), then the overlay's own `runbooks/`.
