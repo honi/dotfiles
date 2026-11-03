@@ -22,10 +22,6 @@ set -euo pipefail
 # shellcheck source=lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-if [[ ! -d "$FILES_DIR" ]]; then
-  echo "no overlay secrets in $FILES_DIR; nothing to do"
-  exit 0
-fi
 [[ -s "$RECIPIENTS" ]] || fail "no age public key in $RECIPIENTS"
 
 if [[ ! -s "$KEY_FILE" ]]; then
@@ -43,6 +39,11 @@ if [[ ! -s "$KEY_FILE" ]]; then
   echo "wrote $KEY_FILE from $repo-age-key"
 fi
 key_matches "$KEY_FILE" || fail "$KEY_FILE doesn't match $RECIPIENTS"
+
+if [[ ! -d "$FILES_DIR" ]]; then
+  echo "no overlay secrets in $FILES_DIR yet; add some with secrets/add.sh"
+  exit 0
+fi
 
 umask 077
 kept=()
