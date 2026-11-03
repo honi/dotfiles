@@ -4,7 +4,10 @@
 # entry that boots Debian's shim from an EFI System Partition other than the
 # one mounted at /boot/efi. Each menu entry is labelled like its boot entry
 # ("Switch host: <label>") and reads the GRUB configuration on that ESP,
-# which boots the other host's default entry.
+# which boots the other host's default entry. The entry exports
+# switched_host=1, and a configuration with this script's check boots its
+# default entry right away when that's set, without showing its menu: one
+# menu per switch, not two.
 #
 # Chainloading doesn't work: with Secure Boot, loading a second shim fails as
 # unsupported, and a chainloaded GRUB can't tell which ESP it came from, so it
@@ -14,9 +17,16 @@
 # host's ESP is formatted again, its entry here points nowhere until
 # update-grub runs again on this host.
 #
-# Prints nothing when it can't read the boot entries (not booted in UEFI
-# mode, or no efibootmgr), so update-grub never fails because of it.
+# Prints only the switched_host check when it can't read the boot entries
+# (not booted in UEFI mode, or no efibootmgr), so update-grub never fails
+# because of it.
 set -uo pipefail
+
+cat <<'EOF'
+if [ "${switched_host}" = 1 ]; then
+	set timeout=0
+fi
+EOF
 
 shim='\EFI\debian\shimx64.efi'
 
@@ -60,6 +70,8 @@ while IFS=$'\t' read -r label partuuid; do
   echo "Found another host: $label on $(readlink -f "$dev")" >&2
   cat <<EOF
 menuentry 'Switch host: $label' --class debian --class os {
+	set switched_host=1
+	export switched_host
 	search --no-floppy --fs-uuid --set=root $uuid
 	configfile /EFI/debian/grub.cfg
 }
