@@ -53,7 +53,7 @@ Only the screens where the answer isn't the default.
 | Primary network interface | the wired `enx…` interface |
 | Hostname | different per install; domain empty |
 | Root password | **empty**: disables root login and gives your user `sudo` |
-| Partitioning | see below |
+| Partitioning | see below; for a reinstall, see [Reinstallation](#reinstallation) |
 | Software selection | untick **Debian desktop environment** and **GNOME**; keep **standard system utilities**; tick **SSH server** |
 
 ### Disk layout
@@ -106,22 +106,6 @@ Encryption: keep the defaults, except **Erase data: No**.
 9. Select the partition under each LV and set it up from the table.
 10. **Finish partitioning and write changes to disk** → Yes.
 
-### Partitioning: reinstall one
-
-Replaces one install and keeps the other. First back up anything on it that isn't in this repository or its overlay.
-
-1. Delete this install's LUKS header backup. With the old passphrase it still decrypts the old data, which stays on the disk.
-2. **Partition disks → Manual.** Don't create a new partition table.
-3. Select the other install's ESP → Use as: **do not use** → Done. Leave its `/boot` and LUKS partitions as they are.
-4. This install's ESP (p1 or p4) → Use as: **EFI System Partition** → Done.
-5. This install's `/boot` (p2 or p5) → Use as: **Ext4** → Format: **yes** → Mount point: `/boot` → Done.
-6. This install's LUKS partition (p3 or p6) → Use as: **physical volume for encryption** → Erase data: **No** → Done.
-7. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only this install's (`/dev/nvme0n1p3` or `/dev/nvme0n1p6`) → Finish → enter a new passphrase twice.
-8. **Configure the Logical Volume Manager** → Yes → Create volume group → its VG (`<vg1>` or `<vg2>`) → select its `/dev/mapper/…_crypt`.
-9. Create logical volume → the VG → each LV from the table → Finish.
-10. Select the partition under each LV and set it up from the table.
-11. **Finish partitioning and write changes to disk** → Yes.
-
 ## First boot
 
 The initramfs asks for the LUKS passphrase, then you land on a text login. Ethernet works; Wi-Fi doesn't yet.
@@ -137,12 +121,7 @@ To work from another computer: `ip -4 addr` shows the `enx…` address, then `ss
    ~/dotfiles/home/setup.sh            # after the reboot, from a text console or SSH
    ```
 
-   Do this after each install, before starting the next one: the system setup labels the install's UEFI entry with its hostname and removes the installer's `debian` entry, which the next install would otherwise reuse.
-
-   If the system setup stops at a failing step, fix the cause and run it again: it resumes at that step. After the reboot the laptop shows the login screen; don't log in there yet, do it over SSH or on a
-   text console (Ctrl+Alt+F3).
-
-   After reinstalling both installs, the system setup stops at the boot entries left from before: they carry the hostnames but point at the old partitions. Check them with `sudo efibootmgr -v`, delete each with `sudo efibootmgr --bootnum <number> --delete-bootnum`, and run the setup again.
+   Do this after each install, before starting the next one. If the system setup stops at a failing step, fix the cause and run it again: it resumes at that step. After the reboot the laptop shows the login screen; don't log in there yet, do it over SSH or on a text console (Ctrl+Alt+F3).
 
 2. Install the overlay and apply it:
 
@@ -154,3 +133,40 @@ To work from another computer: `ip -4 addr` shows the `enx…` address, then `ss
    ```
 
 3. Follow [post-install.md](post-install.md), then the overlay's own `runbooks/`.
+
+## Reinstallation
+
+### Reinstall one
+
+Replaces one install and keeps the other.
+
+1. Back up anything on it that isn't in this repository or its overlay.
+2. Delete this install's LUKS header backup. With the old passphrase it still decrypts the old data, which stays on the disk.
+3. Follow [Firmware](#firmware) and [Debian installer](#debian-installer), with the partitioning below, then [First boot](#first-boot).
+
+Partitioning:
+
+1. **Partition disks → Manual.** Don't create a new partition table.
+2. Select the other install's ESP → Use as: **do not use** → Done. Leave its `/boot` and LUKS partitions as they are.
+3. This install's ESP (p1 or p4) → Use as: **EFI System Partition** → Done.
+4. This install's `/boot` (p2 or p5) → Use as: **Ext4** → Format: **yes** → Mount point: `/boot` → Done.
+5. This install's LUKS partition (p3 or p6) → Use as: **physical volume for encryption** → Erase data: **No** → Done.
+6. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only this install's (`/dev/nvme0n1p3` or `/dev/nvme0n1p6`) → Finish → enter a new passphrase twice.
+7. **Configure the Logical Volume Manager** → Yes → Create volume group → its VG (`<vg1>` or `<vg2>`) → select its `/dev/mapper/…_crypt`.
+8. Create logical volume → the VG → each LV from the table → Finish.
+9. Select the partition under each LV and set it up from the table.
+10. **Finish partitioning and write changes to disk** → Yes.
+
+### Reinstall both
+
+Back up both installs and delete both LUKS header backups. Then install from scratch: the first install creates a new partition table, which removes everything on the disk.
+
+### Boot entries
+
+The system setup gives each install a UEFI boot entry labelled with its hostname, and deletes the `debian` entry the installer creates. After a reinstall:
+
+- **One install, same hostname:** nothing to do. Its ESP is the same partition as before, so the setup keeps its entry and only deletes the installer's `debian` entry.
+- **One install, new hostname:** the setup creates an entry for the new hostname, and the entry with the old one still boots the same ESP. Delete the old one.
+- **Both installs:** the entries from before carry the hostnames but point at the old partitions. When the new install has the same hostname as before, the system setup stops at its old entry. Delete the old entries and run the setup again.
+
+To delete an entry, find its number with `sudo efibootmgr -v` and run `sudo efibootmgr --bootnum <number> --delete-bootnum`.
