@@ -38,9 +38,9 @@ if [[ -z "$(git -C "$overlay" status --porcelain -- home/flake.lock)" ]]; then
   echo "overlay already pins base $short"
 else
   git -C "$overlay" add home/flake.lock
-  git -C "$overlay" commit -m "Pin base $short" -- home/flake.lock
+  git -C "$overlay" commit -m "Bump base to $short" -- home/flake.lock
 fi
 
-"$root/home/setup.sh"
+"$root/home/setup.sh" --no-shell
 
 git -C "$overlay" push
