@@ -119,6 +119,7 @@ To work from another computer: `ip -4 addr` shows the `enx…` address, then `ss
    git clone https://github.com/honi/dotfiles.git ~/dotfiles
    ~/dotfiles/system/setup.sh          # offers to reboot at the end; say yes
    ~/dotfiles/home/setup.sh            # after the reboot, from a text console or SSH
+   exec bash -l                        # a new login shell, with the Nix programs on PATH
    ```
 
    Do this after each install, before starting the next one. If the system setup stops at a failing step, fix the cause and run it again: it resumes at that step. After the reboot the laptop shows the login screen; don't log in there yet, do it over SSH or on a text console (Ctrl+Alt+F3).
