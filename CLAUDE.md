@@ -11,4 +11,4 @@
 - Every step, module and file describes only itself: what it does, and why only for real edge cases, kept generic. No references to other steps, modules or docs, and no history of past iterations or fixes.
 - Each system step verifies its own result with `verify`. Don't document checks in markdown.
 - Steps don't record manual reminders. Manual work goes in `runbooks/`.
-- Shell is bash; run `shellcheck` on scripts. Format Nix with `nix fmt`.
+- Shell is bash; run `shellcheck` on scripts. Format Nix with `nix fmt`, run from `home/` (the flake is there, not at the repo root), and do it before committing any Nix change. If it errors, fix the cause and rerun; don't commit unformatted.
