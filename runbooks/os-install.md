@@ -37,7 +37,7 @@ The Ethernet card works with the stock kernel and is the network for the whole i
 1. Power on, press **F2**. Check that **Secure Boot** is enabled; Debian boots through Microsoft-signed shim. Save and exit.
 2. Plug in Ethernet and the USB stick, power on, press **F12** and pick the USB entry.
 
-F12 is also how you switch between hosts later: each has its own UEFI boot entry, labelled with its hostname. To change which one boots by default, see [boot-order.md](boot-order.md).
+F12 is also how you switch between hosts later: each has its own UEFI boot entry, labelled with its hostname. To switch hosts from the GRUB menu or change which one boots by default, see [multi-boot.md](multi-boot.md).
 
 ## Debian installer
 

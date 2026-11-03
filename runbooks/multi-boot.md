@@ -1,8 +1,8 @@
-# Boot order
+# Multi-boot
 
-Each host has its own UEFI boot entry, labelled with its hostname. The firmware boots the first entry in `BootOrder`. When a host's system setup creates its entry, the entry goes first, so the host set up most recently is the default.
+The hosts share the laptop and its fingerprint reader (see [fingerprints.md](fingerprints.md)), but boot independently: each has its own ESP, GRUB and UEFI boot entry, labelled with its hostname. The firmware boots the first entry in `BootOrder`. When a host's system setup creates its entry, the entry goes first, so the host set up most recently is the default.
 
-## Pick one at power-on
+## Switch hosts
 
 The GRUB menu waits three seconds and lists the other host as **Switch host: <hostname>**, below this host's own entries. Pick it with the arrow keys and Enter. It boots the other host's default entry directly, without showing its menu.
 
