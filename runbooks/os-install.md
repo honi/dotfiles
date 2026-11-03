@@ -95,8 +95,8 @@ Encryption: keep the defaults, except **Erase data: No**.
 
 ### Partitioning: second install
 
-1. **Partition disks → Manual.** Don't create a new partition table.
-2. Select the first install's ESP (shown as "EFI System Partition") → Use as: **do not use** → Done. Leave its `/boot` and LUKS partitions as they are.
+1. **Partition disks → Manual.** Don't create a new partition table. The FREE SPACE below is the large one at the end of the disk, not the ~1 MB gap at the start.
+2. Select the first install's ESP (#1, shown as `K  ESP`: the installer picks it up automatically) → Use as: **do not use** → Done. Leave its `/boot` and LUKS partitions as they are.
 3. FREE SPACE → Create a new partition → `1 GB` → Beginning → Use as: **EFI System Partition** → Done.
 4. FREE SPACE → Create → `2 GB` → Beginning → Use as: **Ext4** → Mount point: `/boot` → Done.
 5. FREE SPACE → Create → all remaining space → Use as: **physical volume for encryption** → Erase data: **No** → Done.
@@ -148,7 +148,7 @@ Replaces one install and keeps the other.
 Partitioning:
 
 1. **Partition disks → Manual.** Don't create a new partition table.
-2. Select the other install's ESP → Use as: **do not use** → Done. Leave its `/boot` and LUKS partitions as they are.
+2. Select the other install's ESP (#4 when reinstalling the first, #1 when reinstalling the second; shown as `K  ESP`, like this install's ESP) → Use as: **do not use** → Done. Leave its `/boot` and LUKS partitions as they are.
 3. This install's ESP (p1 or p4) → Use as: **EFI System Partition** → Done.
 4. This install's `/boot` (p2 or p5) → Use as: **Ext4** → Format: **yes** → Mount point: `/boot` → Done.
 5. This install's LUKS partition (p3 or p6) → Use as: **physical volume for encryption** → Erase data: **No** → Done.
