@@ -21,6 +21,7 @@ runbooks/
   overlays.md               how to create an overlay and manage its secrets
   suspend-check.md          measure battery drain during suspend
   boot-order.md             pick or change which host boots
+  fingerprints.md           enroll fingerprints, shared between the hosts
 system/
   setup.sh                  runs the base steps, then the overlay's
   lib.sh                    helpers for the steps

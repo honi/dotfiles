@@ -4,12 +4,7 @@ Steps that need a person, a secret or a physical action. Do them once on every h
 
 ## Fingerprints
 
-Enroll through sudo with your username.
-
-```
-sudo fprintd-enroll -f right-index-finger "$USER"
-sudo fprintd-enroll -f left-index-finger "$USER"
-```
+The hosts share the reader's storage, so enroll on one host and copy to the other: follow [fingerprints.md](fingerprints.md).
 
 ## LUKS header backup
 
