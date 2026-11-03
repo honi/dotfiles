@@ -12,8 +12,7 @@ home/flake.lock            pins this repo at a commit, and through it nixpkgs an
 home/modules/default.nix   imported after the base modules
 secrets/recipient.txt      the overlay's age public key
 secrets/files/<path>.age   encrypted copies of $HOME/<path>
-runbooks/os-install.md     install order, hostname, partitions, volume group
-runbooks/*.md              other manual steps for this install
+runbooks/*.md              manual steps for this install
 ```
 
 ## Keys

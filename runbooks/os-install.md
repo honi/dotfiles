@@ -1,8 +1,6 @@
 # OS install
 
-Installs Debian 13 (trixie) by hand.
-
-The laptop holds two fully isolated Debian installs, side by side on the same disk. Each has its own ESP, `/boot` and LUKS container with its own passphrase, so neither can read the other's data or overwrite its bootloader. Each install uses one overlay, and the overlay's `runbooks/os-install.md` has the values this runbook asks for: install order, hostname, partitions and their sizes, volume group. Install the first one completely before starting the second.
+The laptop holds two Debian 13 (trixie) installs on the same disk, fully isolated from each other. Each install uses one overlay. Install the first one completely before starting the second.
 
 ## Preamble
 
@@ -53,14 +51,24 @@ Only the screens where the answer isn't the default.
 | Keyboard | American English |
 | Missing firmware (iwlwifi) | **No**: the installer kernel can't drive this card anyway |
 | Primary network interface | the wired `enx…` interface |
-| Hostname | from the overlay's runbook; domain empty |
+| Hostname | different per install; domain empty |
 | Root password | **empty**: disables root login and gives your user `sudo` |
 | Partitioning | see below |
 | Software selection | untick **Debian desktop environment** and **GNOME**; keep **standard system utilities**; tick **SSH server** |
 
 ### Disk layout
 
-Each install is three partitions: ESP, `/boot`, and a LUKS container holding an LVM volume group. The first install creates the partition table and takes the start of the disk; the second takes what's left. Every volume group gets the same logical volumes; what's left stays free in the VG for growing them later.
+Each install is three partitions: ESP, `/boot`, and a LUKS container holding an LVM volume group. The first install creates the partition table and takes the start of the disk; the second takes what's left.
+
+| | First install | Second install |
+| --- | --- | --- |
+| ESP | p1, 1 GB | p4, 1 GB |
+| `/boot` | p2, 2 GB | p5, 2 GB |
+| LUKS | p3, 1200 GB | p6, the rest (~800 GB) |
+| LUKS mapping | `nvme0n1p3_crypt` | `nvme0n1p6_crypt` |
+| Volume group | `<vg1>` (~600 GB stays free) | `<vg2>` (~200 GB stays free) |
+
+Pick a name for each volume group in place of `<vg1>` and `<vg2>`. Every volume group gets the same logical volumes; what's left stays free in the VG for growing them later.
 
 | LV | Size | Use as | Mount point | Reserved blocks |
 | --- | --- | --- | --- | --- |
@@ -78,10 +86,10 @@ Encryption: keep the defaults, except **Erase data: No**.
 2. Select the disk (`nvme0n1`, the line with the size) → **Create new empty partition table** → Yes.
 3. FREE SPACE → Create a new partition → `1 GB` → Beginning → Use as: **EFI System Partition** → Done.
 4. FREE SPACE → Create → `2 GB` → Beginning → Use as: **Ext4** → Mount point: `/boot` → Done.
-5. FREE SPACE → Create → the LUKS size → Beginning → Use as: **physical volume for encryption** → Erase data: **No** → Done.
-6. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only the new LUKS partition → Finish → enter this install's passphrase twice.
-7. **Configure the Logical Volume Manager** → Yes → Create volume group → the VG name → select `/dev/mapper/<LUKS partition>_crypt`.
-8. Create logical volume → the VG → each LV from the table, name and size → Finish.
+5. FREE SPACE → Create → `1200 GB` → Beginning → Use as: **physical volume for encryption** → Erase data: **No** → Done.
+6. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only `/dev/nvme0n1p3` → Finish → enter this install's passphrase twice.
+7. **Configure the Logical Volume Manager** → Yes → Create volume group → `<vg1>` → select `/dev/mapper/nvme0n1p3_crypt`.
+8. Create logical volume → `<vg1>` → each LV from the table, name and size → Finish.
 9. Select the partition under each LV and set it up from the table (Use as, mount point, reserved blocks).
 10. **Finish partitioning and write changes to disk** → Yes. The rest of the disk stays as FREE SPACE.
 
@@ -92,11 +100,27 @@ Encryption: keep the defaults, except **Erase data: No**.
 3. FREE SPACE → Create a new partition → `1 GB` → Beginning → Use as: **EFI System Partition** → Done.
 4. FREE SPACE → Create → `2 GB` → Beginning → Use as: **Ext4** → Mount point: `/boot` → Done.
 5. FREE SPACE → Create → all remaining space → Use as: **physical volume for encryption** → Erase data: **No** → Done.
-6. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only the new LUKS partition → Finish → enter this install's passphrase twice.
-7. **Configure the Logical Volume Manager** → Yes → Create volume group → the VG name → select `/dev/mapper/<LUKS partition>_crypt`.
-8. Create logical volume → the VG → each LV from the table → Finish.
+6. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only `/dev/nvme0n1p6` → Finish → enter this install's passphrase twice.
+7. **Configure the Logical Volume Manager** → Yes → Create volume group → `<vg2>` → select `/dev/mapper/nvme0n1p6_crypt`.
+8. Create logical volume → `<vg2>` → each LV from the table → Finish.
 9. Select the partition under each LV and set it up from the table.
 10. **Finish partitioning and write changes to disk** → Yes.
+
+### Partitioning: reinstall one
+
+Replaces one install and keeps the other. First back up anything on it that isn't in this repository or its overlay.
+
+1. Delete this install's LUKS header backup. With the old passphrase it still decrypts the old data, which stays on the disk.
+2. **Partition disks → Manual.** Don't create a new partition table.
+3. Select the other install's ESP → Use as: **do not use** → Done. Leave its `/boot` and LUKS partitions as they are.
+4. This install's ESP (p1 or p4) → Use as: **EFI System Partition** → Done.
+5. This install's `/boot` (p2 or p5) → Use as: **Ext4** → Format: **yes** → Mount point: `/boot` → Done.
+6. This install's LUKS partition (p3 or p6) → Use as: **physical volume for encryption** → Erase data: **No** → Done.
+7. **Configure encrypted volumes** → Yes → Create encrypted volumes → tick only this install's (`/dev/nvme0n1p3` or `/dev/nvme0n1p6`) → Finish → enter a new passphrase twice.
+8. **Configure the Logical Volume Manager** → Yes → Create volume group → its VG (`<vg1>` or `<vg2>`) → select its `/dev/mapper/…_crypt`.
+9. Create logical volume → the VG → each LV from the table → Finish.
+10. Select the partition under each LV and set it up from the table.
+11. **Finish partitioning and write changes to disk** → Yes.
 
 ## First boot
 
@@ -108,10 +132,12 @@ To work from another computer: `ip -4 addr` shows the `enx…` address, then `ss
 
    ```
    sudo efibootmgr # note the number of the "debian" entry
-   sudo efibootmgr --create --disk /dev/nvme0n1 --part <ESP partition number> \
+   sudo efibootmgr --create --disk /dev/nvme0n1 --part <1 or 4, the ESP> \
      --label "$(hostname)" --loader '\EFI\debian\shimx64.efi'
    sudo efibootmgr --bootnum <number> --delete-bootnum
    ```
+
+   After reinstalling one install, the entry with its hostname still points at its ESP, so only delete the `debian` entry. After reinstalling both, also delete the entries left from before.
 
 2. Get this repository and apply the base:
 
