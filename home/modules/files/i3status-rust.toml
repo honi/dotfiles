@@ -1,0 +1,79 @@
+# i3status-rust 0.22 (the version Regolith ships): the blocks on the bar.
+# Option names follow the 0.22 docs (doc/blocks.md at tag v0.22.0), not the
+# current ones.
+
+# Icons from a Nerd Font (RobotoMono Nerd Font comes with the Dracula look).
+icons = "material-nf"
+
+[theme]
+name = "dracula"
+# Every block reports a state (Idle, Info, Good, Warning, Critical) and the
+# theme colors each. Good and Info get the bar's own colors, so only Warning
+# and Critical stand out. The separator is drawn between blocks: two spaces
+# give flat blocks with a gap. #14151b is the bar's background.
+[theme.overrides]
+separator = " "
+idle_bg = "#14151b"
+idle_fg = "#f8f8f2"
+good_bg = "#14151b"
+good_fg = "#f8f8f2"
+info_bg = "#14151b"
+info_fg = "#f8f8f2"
+
+# Blocks appear left to right in file order. `interval` is the refresh period
+# in seconds; the sound blocks update on events and need none.
+
+[[block]]
+block = "net"
+interval = 10
+
+[[block]]
+block = "cpu"
+interval = 10
+
+[[block]]
+block = "memory"
+display_type = "memory"
+format_mem = "{mem_used_percents}"
+format_swap = "{swap_used_percents}"
+interval = 10
+
+# Microphone (a PipeWire source).
+[[block]]
+block = "sound"
+driver = "pulseaudio"
+device_kind = "source"
+
+# Speakers (a PipeWire sink).
+[[block]]
+block = "sound"
+driver = "pulseaudio"
+device_kind = "sink"
+
+[[block]]
+block = "battery"
+format = "{percentage}"
+full_format = "{percentage}"
+hide_missing = true
+driver = "sysfs"
+interval = 60
+
+# Unread notifications (Super+N lists them).
+[[block]]
+block = "rofication"
+socket_path = "/tmp/rofi_notification_daemon"
+interval = 1
+
+[[block]]
+block = "time"
+format = "%d/%m %R"
+interval = 5
+
+# The gap between the blocks and the tray (Sway's bar has no setting for it).
+# A block of its own so it keeps the bar's background when the one before it
+# turns Warning or Critical. JSON mode because plain output gets trimmed.
+[[block]]
+block = "custom"
+command = "echo '{\"text\": \"  \"}'"
+json = true
+interval = "once"

@@ -1,0 +1,3 @@
+#%PAM-1.0
+# gtklock: password only.
+auth required pam_unix.so

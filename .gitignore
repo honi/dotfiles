@@ -1,0 +1,6 @@
+# nix build output links
+result
+result-*
+
+# the installed overlay, a private repository of its own
+/overlay/

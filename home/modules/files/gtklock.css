@@ -1,0 +1,15 @@
+/* gtklock styled like the tuigreet login: black, white Terminus text, a white
+   frame and the password typed inline.
+   Element IDs are gtklock's widget names. */
+* { font-family: "Terminus"; font-size: 14pt; }
+window { background: #000000; color: #ffffff; }
+#window-box { border: 2px solid #ffffff; border-radius: 0; padding: 16px 24px; }
+#time-box, #clock-label, #date-label { margin: 0; padding: 0; min-height: 0; font-size: 0; }
+#input-label { font-weight: bold; color: #ffffff; }
+#input-field { background: transparent; color: #ffffff; border: none; border-radius: 0; box-shadow: none; caret-color: #ffffff; }
+/* The label is styled directly: themes colour button labels per state (such as
+   disabled while checking the password), which a colour on the button loses to. */
+#unlock-button, #unlock-button:disabled { background: #000000; background-image: none; border: 1px solid #ffffff; border-radius: 0; box-shadow: none; text-shadow: none; padding: 2px 12px; }
+#unlock-button label, #unlock-button:disabled label { color: #ffffff; }
+#unlock-button:focus { border-width: 2px; }
+#error-label, #warning-label { color: #ff5555; }

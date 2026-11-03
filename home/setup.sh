@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# Apply the home configuration.
+#
+#   ./setup.sh            the overlay's configuration, or the base's without one
+#   ./setup.sh --local    the overlay's, built on this repo as it is on disk
+#
+# With an overlay installed (cloned into overlay/ in this repo), its
+# home/flake.nix is the configuration: the base at the commit its flake.lock
+# pins, plus its own modules. Without one, it's this repo's base
+# configuration. --local swaps the pinned base for this checkout, committed or
+# not, for this run only (Nix warns that it won't write that to the overlay's
+# flake.lock). Files it would replace that it didn't write are kept with a
+# .backup suffix.
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
+overlay="$(cd .. && pwd)/overlay/home"
+args=()
+if [[ -f "$overlay/flake.nix" ]]; then
+  flake="$overlay"
+  config=default
+  if [[ "${1:-}" == --local ]]; then args+=(--override-input dotfiles "path:$PWD"); fi
+else
+  flake="$PWD"
+  config=base
+fi
+
+exec nix run "$flake#home-manager" -- switch --flake "$flake#$config" -b backup "${args[@]}"
