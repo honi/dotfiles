@@ -7,7 +7,7 @@
 - `overlay/` is gitignored but is a nested repository we work on alongside this one. Always include it when searching (grep, glob, file listings) for a step, module, file, secret or runbook, and look in both base and overlay. Commit changes in whichever repository they belong to.
 - Prefer overlays that add to base (steps, files, modules, secrets, runbooks) over ones that change what base does. When an overlay has to override something from base, keep it small and say why where it happens.
 - Step numbers order groups, not steps: steps that share a number must not depend on each other. Give a step its own number only when it depends on an earlier group.
-- Config files: install whole files from `files/` or use `.d` drop-ins. Don't edit existing files in place with `sed`/`awk`/`>>`.
+- Config files: install whole files from `files/` or use `.d` drop-ins. Don't edit existing files in place with `sed`/`awk`/`>>`. The exception is a file the installer generates that has no drop-in mechanism (`/etc/hosts`): keep one marked block in it with `put_block`.
 - Every step, module and file describes only itself: what it does, and why only for real edge cases, kept generic. No references to other steps, modules or docs, and no history of past iterations or fixes.
 - Each system step verifies its own result with `verify`. Don't document checks in markdown.
 - Steps don't record manual reminders. Manual work goes in `runbooks/`.
