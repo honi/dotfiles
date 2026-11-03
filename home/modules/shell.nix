@@ -26,12 +26,13 @@
       ll = "ls -alhF";
     };
 
-    # Prompt: the last three directories in grey, then a Dracula purple
-    # (#bd93f9) ">". PROMPT_DIRTRIM keeps \w to three components (the rest
-    # shows as "..."). The terminal title is set to user@host: dir.
+    # Prompt: the hostname and the last three directories in grey, as
+    # host:dir, then a Dracula purple (#bd93f9) ">". PROMPT_DIRTRIM keeps \w
+    # to three components (the rest shows as "..."). The terminal title is
+    # set to user@host: dir.
     initExtra = ''
       PROMPT_DIRTRIM=3
-      PS1='\[\e[38;5;245m\]\w\[\e[0m\] \[\e[38;2;189;147;249m\]>\[\e[0m\] '
+      PS1='\[\e[38;5;245m\]\h:\w\[\e[0m\] \[\e[38;2;189;147;249m\]>\[\e[0m\] '
       case "$TERM" in
         xterm*|rxvt*|foot*) PS1="\[\e]0;\u@\h: \w\a\]$PS1" ;;
       esac
