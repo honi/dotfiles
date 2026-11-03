@@ -4,6 +4,7 @@
 #
 #   ./setup.sh            the overlay's configuration, or the base's without one
 #   ./setup.sh --local    the overlay's, built on this repo as it is on disk
+#   ./setup.sh --no-shell don't end with a login shell (for scripts)
 #
 # With an overlay installed (cloned into overlay/ in this repo), its
 # home/flake.nix is the configuration: the base at the commit its flake.lock
@@ -19,11 +20,21 @@ start_dir="$PWD"
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 overlay="$(cd .. && pwd)/overlay/home"
+use_local=false
+shell=true
+for arg in "$@"; do
+  case "$arg" in
+    --local) use_local=true ;;
+    --no-shell) shell=false ;;
+    *) echo "unknown option: $arg" >&2; exit 1 ;;
+  esac
+done
+
 args=()
 if [[ -f "$overlay/flake.nix" ]]; then
   flake="$overlay"
   config=default
-  if [[ "${1:-}" == --local ]]; then args+=(--override-input dotfiles "path:$PWD"); fi
+  if $use_local; then args+=(--override-input dotfiles "path:$PWD"); fi
 else
   flake="$PWD"
   config=base
@@ -31,7 +42,7 @@ fi
 
 nix run "$flake#home-manager" -- switch --flake "$flake#$config" -b backup "${args[@]}"
 
-if [[ -t 0 && -t 1 ]]; then
+if $shell && [[ -t 0 && -t 1 ]]; then
   cd "$start_dir"
   exec nix run "$flake#homeConfigurations.$config.config.programs.bash.package" -- -l
 fi
