@@ -12,9 +12,9 @@
 # never touched.
 #
 # Anything unexpected stops the step before NVRAM is changed: not booted in
-# UEFI mode, no ESP at /boot/efi or no shim on it, booted from an entry that
-# isn't this host's shim, or an entry with this hostname that boots
-# something else (left from an earlier installation with the same hostname).
+# UEFI mode, no ESP at /boot/efi or no shim on it, or an entry with this
+# hostname that boots something else (left from an earlier installation with
+# the same hostname).
 
 nvram_off() { debconf-show grub-efi-amd64 | grep -E '^[* ] grub2/update_nvram: false$' >/dev/null; }
 
@@ -103,14 +103,7 @@ no_debian_entry() {
 
 # --- checks before changing NVRAM -------------------------------------------
 
-# This boot came through an entry that boots this host's shim. Confirms
-# both that the entries are read correctly and that this is the host whose
-# ESP is mounted.
-current="$(boot_var BootCurrent)"
-ours_all="$(entry_numbers "" 1)"
-[[ -n "$current" ]] || fail "efibootmgr shows no BootCurrent"
-grep -qx "$current" <<<"$ours_all" \
-  || fail "booted from Boot$current, which doesn't boot $loader on $esp; boot this host from its own entry and run again"
+efibootmgr -v >/dev/null || fail "efibootmgr can't read the boot entries"
 
 named="$(entry_numbers "$label" "")"
 named_ours="$(entry_numbers "$label" 1)"
