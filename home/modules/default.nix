@@ -10,6 +10,7 @@
     ./keyboard.nix
     ./lock-screen.nix
     ./idle.nix
+    ./kbd-backlight.nix
     ./session.nix
     ./screenshots.nix
     ./terminal.nix
