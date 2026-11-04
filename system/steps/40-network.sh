@@ -12,7 +12,9 @@
 # network interface, so a VPN can answer for its own domains while everything
 # else keeps using the normal resolver. NetworkManager and VPN clients register
 # their DNS with it, and /etc/resolv.conf points at its local stub. Debian
-# ships it as a separate package.
+# ships it as a separate package. LLMNR, which asks the whole local network to
+# resolve a name DNS couldn't, is off: any device on the network can answer it,
+# and it announces this machine's name to all of them.
 #
 # Nothing is restarted here, so an SSH session over Ethernet stays up; the
 # handovers happen at the next reboot.
@@ -21,6 +23,8 @@ apt_install network-manager
 
 if ! is_installed systemd-resolved; then needs_reboot "DNS moves to systemd-resolved"; fi
 apt_install systemd-resolved
+put_file /etc/systemd/resolved.conf.d/no-llmnr.conf
+if [[ $CHANGED -eq 1 ]]; then needs_reboot "systemd-resolved stops using LLMNR"; fi
 
 backup_once /etc/network/interfaces
 put_file /etc/network/interfaces
@@ -42,3 +46,5 @@ verify "ifupdown only manages loopback" only_loopback_in_ifupdown
 verify "systemd-resolved enabled" systemctl is-enabled systemd-resolved
 verify "resolv.conf points at the resolved stub" \
   test "$(readlink -f /etc/resolv.conf)" = /run/systemd/resolve/stub-resolv.conf
+verify "LLMNR is off in the resolver's configuration" \
+  bash -c "systemd-analyze cat-config systemd/resolved.conf | grep -qx 'LLMNR=no'"
