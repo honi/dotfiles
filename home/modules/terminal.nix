@@ -1,9 +1,3 @@
-# foot terminal settings.
-#
-#   font     RobotoMono Nerd Font, the same family as the bar and GTK
-#            monospace text
-#   pad      8px between the window edge and the text
-#   include  the Dracula color scheme from foot-themes
 { ... }:
 {
   xdg.configFile."foot/foot.ini".text = ''
@@ -11,5 +5,9 @@
     font=RobotoMono Nerd Font:size=11
     pad=8x8
     include=/usr/share/foot/themes/dracula
+
+    [key-bindings]
+    # Copy the whole scrollback to the clipboard; foot has no select-all.
+    pipe-scrollback=[wl-copy] Control+Shift+a
   '';
 }
