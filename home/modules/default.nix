@@ -28,6 +28,7 @@
     ./bluetooth.nix
     ./claude-code.nix
     ./bitwarden-cli.nix
+    ./tableplus.nix
   ];
 
   home.username = "jb";
