@@ -1,0 +1,14 @@
+# The VPN, from ~/.local/bin/vpn: `status` prints the block (Idle when off,
+# Info while connected, Warning while connecting or when it can't), and a
+# click runs `toggle`. Info is the bar's own color everywhere else, so this
+# block overrides it with Dracula's comment color to show the VPN is on.
+[[block]]
+block = "custom"
+command = "\"$HOME/.local/bin/vpn\" status"
+on_click = "\"$HOME/.local/bin/vpn\" toggle"
+json = true
+interval = 5
+[block.theme_overrides]
+info_bg = "#6272a4"
+info_fg = "#f8f8f2"
+

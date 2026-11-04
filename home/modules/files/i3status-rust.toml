@@ -24,6 +24,21 @@ info_fg = "#f8f8f2"
 # Blocks appear left to right in file order. `interval` is the refresh period
 # in seconds; the sound blocks update on events and need none.
 
+# The hostname, on a background that tells the machines apart.
+[[block]]
+block = "custom"
+command = "hostname"
+interval = "once"
+[block.theme_overrides]
+idle_bg = "@hostBg@"
+idle_fg = "@hostFg@"
+
+@vpnBlock@# Unread notifications (Super+N lists them).
+[[block]]
+block = "rofication"
+socket_path = "/tmp/rofi_notification_daemon"
+interval = 1
+
 [[block]]
 block = "net"
 interval = 10
@@ -59,25 +74,10 @@ hide_missing = true
 driver = "sysfs"
 interval = 60
 
-# Unread notifications (Super+N lists them).
-[[block]]
-block = "rofication"
-socket_path = "/tmp/rofi_notification_daemon"
-interval = 1
-
 [[block]]
 block = "time"
 format = "%d/%m %R"
 interval = 5
-
-# The hostname, on a background that tells the machines apart.
-[[block]]
-block = "custom"
-command = "hostname"
-interval = "once"
-[block.theme_overrides]
-idle_bg = "@hostBg@"
-idle_fg = "@hostFg@"
 
 # The gap between the blocks and the tray (Sway's bar has no setting for it).
 # A block of its own so it keeps the bar's background when the one before it

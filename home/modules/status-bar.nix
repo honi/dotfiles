@@ -15,6 +15,7 @@ let
 in
 {
   options.statusBar = {
+    vpn = lib.mkEnableOption "the VPN block, which runs ~/.local/bin/vpn (status and toggle); the overlay provides that script";
     hostBg = lib.mkOption {
       type = lib.types.str;
       default = "#bd93f9";
@@ -30,6 +31,9 @@ in
   config = {
     xdg.configFile.${statusConfig}.source = pkgs.replaceVars ./files/i3status-rust.toml {
       inherit (config.statusBar) hostBg hostFg;
+      vpnBlock = lib.optionalString config.statusBar.vpn (
+        builtins.readFile ./files/i3status-rust-vpn.toml
+      );
     };
 
     # Margin around the bar (top right bottom left), matching the inner window
