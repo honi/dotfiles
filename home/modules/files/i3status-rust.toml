@@ -75,6 +75,13 @@ driver = "sysfs"
 interval = 60
 
 [[block]]
+block = "custom"
+command = "\"$HOME/.local/bin/theme\" status"
+on_click = "\"$HOME/.local/bin/theme\" toggle"
+json = true
+interval = 1
+
+[[block]]
 block = "time"
 format = "%d/%m %R"
 interval = 5

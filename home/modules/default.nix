@@ -4,6 +4,7 @@
   imports = [
     ./xresources.nix
     ./appearance.nix
+    ./theme.nix
     ./status-bar.nix
     ./display.nix
     ./night-light.nix
