@@ -13,6 +13,7 @@ name = "dracula"
 # give flat blocks with a gap. #14151b is the bar's background.
 [theme.overrides]
 separator = " "
+separator_bg = "#14151b"
 idle_bg = "#14151b"
 idle_fg = "#f8f8f2"
 good_bg = "#14151b"
@@ -68,6 +69,15 @@ interval = 1
 block = "time"
 format = "%d/%m %R"
 interval = 5
+
+# The hostname, on a background that tells the machines apart.
+[[block]]
+block = "custom"
+command = "hostname"
+interval = "once"
+[block.theme_overrides]
+idle_bg = "@hostBg@"
+idle_fg = "@hostFg@"
 
 # The gap between the blocks and the tray (Sway's bar has no setting for it).
 # A block of its own so it keeps the bar's background when the one before it
