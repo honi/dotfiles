@@ -26,6 +26,13 @@
 # so the LUKS prompt loses the console font. A Regolith dependency recommends
 # it; priority -1 makes plymouth* uninstallable, so apt skips the
 # recommendation. The pin has to be in place before the install below.
+#
+# mate-polkit is the polkit agent the session starts. It is installed first
+# on its own: network-manager-applet needs "policykit-1-gnome |
+# polkit-1-auth-agent", Debian 13 has no policykit-1-gnome, and with no agent
+# installed yet apt satisfies it with another one (hyprpolkitagent, from
+# backports), which fails to register because polkit allows one agent per
+# session.
 
 fetch_keyring https://archive.regolith-desktop.com/regolith.key \
   /usr/share/keyrings/regolith-archive-keyring.gpg
@@ -44,6 +51,8 @@ Pin: release *
 Pin-Priority: -1
 EOF
 
+apt_install mate-polkit
+
 apt_install \
   regolith-desktop \
   regolith-session-sway \
@@ -54,6 +63,7 @@ apt_install \
 
 verify "Regolith keyring present" test -s /usr/share/keyrings/regolith-archive-keyring.gpg
 verify "apt reads the Regolith repository" apt_knows_source archive.regolith-desktop.com
-verify_installed regolith-desktop regolith-session-sway regolith-look-dracula xdg-desktop-portal-regolith gnome-session-common
+verify_installed mate-polkit regolith-desktop regolith-session-sway regolith-look-dracula xdg-desktop-portal-regolith gnome-session-common
 verify "plymouth not installed" not_installed plymouth
+verify "hyprpolkitagent not installed" not_installed hyprpolkitagent
 verify "a Wayland session for the greeter" compgen -G "/usr/share/wayland-sessions/*.desktop"
