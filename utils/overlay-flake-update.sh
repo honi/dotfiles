@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Pin the overlay to the base's latest commit on GitHub, push the overlay, and
-# apply the home configuration.
+# Pin the overlay to the base's latest commit on GitHub, apply the home
+# configuration, and push the overlay.
 #
 #   utils/overlay-flake-update.sh
 #
@@ -9,8 +9,7 @@
 # pushed commits can be pinned; this repo's checkout isn't read or pushed.
 # When its HEAD isn't the commit pinned, that's reported: push it (or pull)
 # and run this again to pin it. The overlay's flake.lock is committed if it
-# changed, and pushed before the configuration applies. From a terminal, it
-# ends in the new login shell.
+# changed, and pushed only once the configuration has applied.
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -41,6 +40,6 @@ else
   git -C "$overlay" commit -m "Bump base to $short" -- home/flake.lock
 fi
 
-git -C "$overlay" push
-
 "$root/home/setup.sh"
+
+git -C "$overlay" push
