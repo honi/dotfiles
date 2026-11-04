@@ -18,6 +18,7 @@
     ./lazygit.nix
     ./neovim.nix
     ./shellcheck.nix
+    ./glow.nix
     ./direnv.nix
     ./disk-space-check.nix
     ./suspend-check.nix
