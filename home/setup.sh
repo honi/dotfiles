@@ -12,11 +12,9 @@
 # both flakes straight from disk, so uncommitted and untracked files count, for
 # this run only (Nix warns that it won't write that to the overlay's
 # flake.lock). Files it would replace that it didn't write are kept with a
-# .backup suffix. From a terminal, it ends by replacing itself with a login
-# shell, the configured one, in the directory it was run from, so the new
-# environment applies.
+# .backup suffix. From a terminal, it ends by asking you to restart your shell,
+# so the new environment applies.
 set -euo pipefail
-start_dir="$PWD"
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 overlay="$(cd .. && pwd)/overlay/home"
@@ -43,6 +41,5 @@ if $use_local; then flake="path:$flake"; fi
 nix run "$flake#home-manager" -- switch --flake "$flake#$config" -b backup "${args[@]}"
 
 if [[ -t 0 && -t 1 ]]; then
-  cd "$start_dir"
-  exec nix run "$flake#homeConfigurations.$config.config.programs.bash.package" -- -l
+  echo "Home configuration applied. Restart your shell to pick up the changes."
 fi
