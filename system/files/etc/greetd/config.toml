@@ -6,7 +6,8 @@ vt = 7
 [default_session]
 # tuigreet: clock, * while typing the password, and only Wayland sessions.
 # No --remember options: username and session are asked every time.
-command = "tuigreet --time --asterisks --sessions /usr/share/wayland-sessions"
+# The power menu (F12) calls systemctl, as the greeter's PATH has no sbin.
+command = "tuigreet --time --asterisks --sessions /usr/share/wayland-sessions --power-shutdown '/usr/bin/systemctl poweroff' --power-reboot '/usr/bin/systemctl reboot'"
 
 # The user the greeter runs as; Debian's postinst creates it.
 user = "_greetd"
