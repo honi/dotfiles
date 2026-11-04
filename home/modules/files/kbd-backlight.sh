@@ -9,6 +9,8 @@
 #         nothing was saved, or when the light was turned on in the meantime
 #         (a brightness key).
 #
+# Logs each change to the journal under the tag kbd-backlight.
+#
 # Does nothing on a machine without a keyboard backlight.
 
 set -u
@@ -27,11 +29,17 @@ case "${1:-}" in
     if (( current > 0 )) && [[ ! -e "$saved" ]]; then
       echo "$current" >"$saved"
       echo 0 >"$led"
+      logger -t kbd-backlight "off (was $current)"
     fi
     ;;
   on)
     if [[ -e "$saved" ]]; then
-      (( current == 0 )) && cat "$saved" >"$led"
+      if (( current == 0 )); then
+        cat "$saved" >"$led"
+        logger -t kbd-backlight "on (restored $(cat "$saved"))"
+      else
+        logger -t kbd-backlight "on skipped (already $current)"
+      fi
       rm -f "$saved"
     fi
     ;;
