@@ -37,4 +37,8 @@
   # Start, stop and restart user services as their definitions change on
   # each switch.
   systemd.user.startServices = true;
+
+  # No unread-news count after each switch: its hint is to run `home-manager
+  # news`, and that command isn't on the PATH (it runs through the flake).
+  news.display = "silent";
 }
