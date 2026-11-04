@@ -8,10 +8,19 @@
 # hands every other interface to NetworkManager after the next boot. The
 # installer writes this file; no package owns it.
 #
+# systemd-resolved is the DNS resolver. It keeps DNS servers and domains per
+# network interface, so a VPN can answer for its own domains while everything
+# else keeps using the normal resolver. NetworkManager and VPN clients register
+# their DNS with it, and /etc/resolv.conf points at its local stub. Debian
+# ships it as a separate package.
+#
 # Nothing is restarted here, so an SSH session over Ethernet stays up; the
-# handover happens at the next reboot.
+# handovers happen at the next reboot.
 
 apt_install network-manager
+
+if ! is_installed systemd-resolved; then needs_reboot "DNS moves to systemd-resolved"; fi
+apt_install systemd-resolved
 
 backup_once /etc/network/interfaces
 put_file /etc/network/interfaces
@@ -27,6 +36,9 @@ only_loopback_in_ifupdown() {
   [[ -z "$others" ]] || { printf '%s\n' "$others" >&2; return 1; }
 }
 
-verify_installed network-manager
+verify_installed network-manager systemd-resolved
 verify "NetworkManager enabled" systemctl is-enabled NetworkManager
 verify "ifupdown only manages loopback" only_loopback_in_ifupdown
+verify "systemd-resolved enabled" systemctl is-enabled systemd-resolved
+verify "resolv.conf points at the resolved stub" \
+  test "$(readlink -f /etc/resolv.conf)" = /run/systemd/resolve/stub-resolv.conf
