@@ -28,5 +28,5 @@
 
 ## Local development
 
-- Home Manager changes: apply them locally first with `home/setup.sh --local`, which builds on this checkout as it is on disk (overriding the pinned base input) instead of the commit the overlay's `flake.lock` pins. Then show me the changes and wait for my confirmation before committing.
+- Home Manager changes: apply them locally first with `home/setup.sh --local`, which builds on the files as they are on disk, in both base and overlay, including uncommitted and untracked ones (overriding the pinned base input instead of the commit the overlay's `flake.lock` pins). No `git add` is needed first. Then show me the changes and wait for my confirmation before committing.
 - System steps and secrets: never run the setup scripts yourself. I run them.
