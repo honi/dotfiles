@@ -9,7 +9,7 @@
 ## Base and overlay
 
 - This repo is public. It's the base install: system and home, with no machines and no hostnames. Never put private details in it (overlay names, private repository URLs, employer details); scripts ask for them.
-- An overlay is a private repository cloned into `overlay/` here (gitignored), with the same structure (`system/steps`, `system/files`, `home/modules`, `secrets`, `runbooks`). It holds only config and data, plus a `home/flake.nix` that builds its home configuration with this repo's `lib.mkHome` and pins this repo in its `flake.lock`; every script lives here.
+- An overlay is a private repository cloned into `overlay/` here (gitignored), with the same structure (`system/steps`, `system/files`, `home/modules`, `secrets`, `runbooks`). It has a `home/flake.nix` that builds its home configuration with this repo's `lib.mkHome` and pins this repo in its `flake.lock`. Keep hosts as similar as possible: put config, data and scripts in base whenever they can be shared, with options to fine-tune them per host. An overlay supplies its own config, data and scripts only for what is specific to that host.
 - `overlay/` is gitignored but is a nested repository we work on alongside this one. Always include it when searching (grep, glob, file listings) for a step, module, file, secret or runbook, and look in both base and overlay.
 - Prefer overlays that add to base (steps, files, modules, secrets, runbooks) over ones that change what base does. When an overlay has to override something from base, keep it small and say why where it happens.
 
