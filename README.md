@@ -10,12 +10,12 @@ Debian 13 with Regolith (Sway, Dracula) on a Framework Laptop 13 Pro (Intel Pant
 
 ## How to install
 
-Follow [runbooks/os-install.md](runbooks/os-install.md).
+Follow [docs/os-install.md](docs/os-install.md).
 
 ## Layout
 
 ```
-runbooks/
+docs/
   os-install.md             install Debian (once per host)
   post-install.md           manual steps after install
   overlays.md               how to create an overlay and manage its secrets

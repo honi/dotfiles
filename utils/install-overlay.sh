@@ -52,5 +52,5 @@ Installed $repo in $dest. Next:
   $root/system/setup.sh
   $root/home/setup.sh
   $root/secrets/setup.sh
-then the manual steps in $dest/runbooks/.
+then the manual steps in $dest/docs/.
 EOF

@@ -9,9 +9,9 @@
 ## Base and overlay
 
 - This repo is public. It's the base install: system and home, with no machines and no hostnames. Never put private details in it (overlay names, private repository URLs, employer details); scripts ask for them.
-- An overlay is a private repository cloned into `overlay/` here (gitignored), with the same structure (`system/steps`, `system/files`, `home/modules`, `home/files`, `secrets`, `runbooks`). It has a `home/flake.nix` that builds its home configuration with this repo's `lib.mkHome` and pins this repo in its `flake.lock`. Keep hosts as similar as possible: put config, data and scripts in base whenever they can be shared, with options to fine-tune them per host. An overlay supplies its own config, data and scripts only for what is specific to that host.
-- `overlay/` is gitignored but is a nested repository we work on alongside this one. Always include it when searching (grep, glob, file listings) for a step, module, file, secret or runbook, and look in both base and overlay.
-- Prefer overlays that add to base (steps, files, modules, secrets, runbooks) over ones that change what base does. When an overlay has to override something from base, keep it small and say why where it happens.
+- An overlay is a private repository cloned into `overlay/` here (gitignored), with the same structure (`system/steps`, `system/files`, `home/modules`, `home/files`, `secrets`, `docs`). It has a `home/flake.nix` that builds its home configuration with this repo's `lib.mkHome` and pins this repo in its `flake.lock`. Keep hosts as similar as possible: put config, data and scripts in base whenever they can be shared, with options to fine-tune them per host. An overlay supplies its own config, data and scripts only for what is specific to that host.
+- `overlay/` is gitignored but is a nested repository we work on alongside this one. Always include it when searching (grep, glob, file listings) for a step, module, file, secret or doc, and look in both base and overlay.
+- Prefer overlays that add to base (steps, files, modules, secrets, docs) over ones that change what base does. When an overlay has to override something from base, keep it small and say why where it happens.
 
 ## Steps and files
 
@@ -21,7 +21,7 @@
 - Config files: install whole files from `files/` or use `.d` drop-ins. Don't edit existing files in place with `sed`/`awk`/`>>`. The exception is a file the installer generates that has no drop-in mechanism (`/etc/hosts`): keep one marked block in it with `put_block`.
 - Every step, module and file describes only itself: what it does, and why only for real edge cases, kept generic. No references to other steps, modules or docs, and no history of past iterations or fixes.
 - Each system step verifies its own result with `verify`. Don't document checks in markdown.
-- Steps don't record manual reminders. Manual work goes in `runbooks/`.
+- Steps don't record manual reminders. Manual work goes in `docs/`.
 
 ## Tooling
 

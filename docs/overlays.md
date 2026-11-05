@@ -1,6 +1,6 @@
 # Overlays
 
-An overlay is a private repository with what one host adds on top of this base: system steps, home modules, encrypted secrets and its own runbooks. It's cloned into `overlay/` inside this repo, which git ignores, and the setups pick it up from there. Commit and push it from there like any repository; don't run `git clean -x` here, which would delete it. A host has at most one overlay.
+An overlay is a private repository with what one host adds on top of this base: system steps, home modules, encrypted secrets and its own docs. It's cloned into `overlay/` inside this repo, which git ignores, and the setups pick it up from there. Commit and push it from there like any repository; don't run `git clean -x` here, which would delete it. A host has at most one overlay.
 
 It has the same layout as this repo, and only holds config and data:
 
@@ -12,7 +12,7 @@ home/flake.lock            pins this repo at a commit, and through it nixpkgs an
 home/modules/default.nix   imported after the base modules
 secrets/recipient.txt      the overlay's age public key
 secrets/files/<path>.age   encrypted copies of $HOME/<path>
-runbooks/*.md              manual steps for this host
+docs/*.md                  manual steps for this host
 ```
 
 ## Keys

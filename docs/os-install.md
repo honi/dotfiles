@@ -133,7 +133,7 @@ To work from another computer: `ip -4 addr` shows the `enx…` address, then `ss
    ~/dotfiles/secrets/setup.sh
    ```
 
-3. Follow [post-install.md](post-install.md), then the overlay's own `runbooks/`.
+3. Follow [post-install.md](post-install.md), then the overlay's own `docs/`.
 
 ## Reinstallation
 
