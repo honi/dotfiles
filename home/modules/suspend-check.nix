@@ -7,6 +7,6 @@
 {
   home.file.".local/bin/suspend-check" = {
     executable = true;
-    source = ./files/suspend-check.sh;
+    source = ../files/suspend-check.sh;
   };
 }

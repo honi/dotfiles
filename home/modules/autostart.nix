@@ -15,7 +15,7 @@ in
 {
   home.file.${script} = {
     executable = true;
-    source = ./files/publish-display-env.sh;
+    source = ../files/publish-display-env.sh;
   };
 
   xdg.dataFile."systemd/user/regolith-wayland.service.d/publish-display-env.conf".text = ''

@@ -29,10 +29,10 @@ in
   };
 
   config = {
-    xdg.configFile.${statusConfig}.source = pkgs.replaceVars ./files/i3status-rust.toml {
+    xdg.configFile.${statusConfig}.source = pkgs.replaceVars ../files/i3status-rust.toml {
       inherit (config.statusBar) hostBg hostFg;
       vpnBlock = lib.optionalString config.statusBar.vpn (
-        builtins.readFile ./files/i3status-rust-vpn.toml
+        builtins.readFile ../files/i3status-rust-vpn.toml
       );
     };
 

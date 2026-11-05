@@ -16,7 +16,7 @@ in
 {
   home.file.${script} = {
     executable = true;
-    source = ./files/kbd-backlight.sh;
+    source = ../files/kbd-backlight.sh;
   };
 
   systemd.user.services.kbd-backlight = {

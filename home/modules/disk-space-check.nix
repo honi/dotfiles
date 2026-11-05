@@ -16,7 +16,7 @@ in
 {
   home.file.${script} = {
     executable = true;
-    source = ./files/disk-space-check.sh;
+    source = ../files/disk-space-check.sh;
   };
 
   systemd.user.services.disk-space-check = {

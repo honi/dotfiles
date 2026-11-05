@@ -20,7 +20,7 @@ in
 {
   home.file.${script} = {
     executable = true;
-    source = ./files/audio-sleep-inhibit.sh;
+    source = ../files/audio-sleep-inhibit.sh;
   };
 
   systemd.user.services.audio-sleep-inhibit = {

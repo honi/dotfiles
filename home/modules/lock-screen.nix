@@ -11,7 +11,7 @@ let
   style = "gtklock/style.css";
 in
 {
-  xdg.configFile.${style}.source = ./files/gtklock.css;
+  xdg.configFile.${style}.source = ../files/gtklock.css;
 
   regolith.xresources."wm.program.lock_sway" =
     "gtklock -d --style ${config.xdg.configHome}/${style} --time-format= --date-format=";

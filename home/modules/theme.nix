@@ -10,7 +10,7 @@
 {
   home.file.".local/bin/theme" = {
     executable = true;
-    source = ./files/theme.sh;
+    source = ../files/theme.sh;
   };
 
   systemd.user.services.theme = {
