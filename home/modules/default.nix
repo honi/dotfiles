@@ -2,34 +2,35 @@
 { ... }:
 {
   imports = [
-    ./xresources.nix
     ./appearance.nix
-    ./theme.nix
-    ./status-bar.nix
-    ./display.nix
-    ./night-light.nix
-    ./keyboard.nix
-    ./lock-screen.nix
-    ./idle.nix
-    ./kbd-backlight.nix
-    ./session.nix
-    ./screenshots.nix
-    ./terminal.nix
-    ./shell.nix
-    ./git.nix
-    ./lazygit.nix
-    ./neovim.nix
-    ./shellcheck.nix
-    ./glow.nix
-    ./nix.nix
-    ./direnv.nix
-    ./disk-space-check.nix
-    ./suspend-check.nix
     ./autostart.nix
+    ./bitwarden-cli.nix
     ./bluetooth.nix
     ./claude-code.nix
-    ./bitwarden-cli.nix
+    ./dev.nix
+    ./direnv.nix
+    ./disk-space-check.nix
+    ./display.nix
+    ./git.nix
+    ./glow.nix
+    ./idle.nix
+    ./kbd-backlight.nix
+    ./keyboard.nix
+    ./lazygit.nix
+    ./lock-screen.nix
+    ./neovim.nix
+    ./night-light.nix
+    ./nix.nix
+    ./screenshots.nix
+    ./session.nix
+    ./shell.nix
+    ./shellcheck.nix
+    ./status-bar.nix
+    ./suspend-check.nix
     ./tableplus.nix
+    ./terminal.nix
+    ./theme.nix
+    ./xresources.nix
   ];
 
   home.username = "jb";
