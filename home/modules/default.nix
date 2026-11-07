@@ -21,6 +21,7 @@
     ./neovim.nix
     ./shellcheck.nix
     ./glow.nix
+    ./nix.nix
     ./direnv.nix
     ./disk-space-check.nix
     ./suspend-check.nix
