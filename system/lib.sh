@@ -253,14 +253,30 @@ put_file() {
 # For a file the installer generates and that has no drop-in directory:
 # keeps the block between "# BEGIN NAME" and "# END NAME" in PATH, holding
 # stdin, and leaves the rest of the file alone. The block is replaced if it
-# is there and appended if not.
+# is there and appended if not. It is set off from any other content by one
+# empty line above and one below.
 put_block() {
   local path="$1" name="$2" mode="${3:-0644}" body
   body="$(cat)"
+  local -x BLOCK
+  BLOCK="$(printf '# BEGIN %s\n%s\n# END %s' "$name" "$body" "$name")"
   write_file "$path" "$mode" < <(
-    awk -v b="# BEGIN $name" -v e="# END $name" \
-      '$0 == b { skip = 1; next } $0 == e { skip = 0; next } !skip' "$path"
-    printf '# BEGIN %s\n%s\n# END %s\n' "$name" "$body" "$name"
+    awk -v b="# BEGIN $name" -v e="# END $name" '
+      function blank(s) { return s ~ /^[[:space:]]*$/ }
+      $0 == b { skip = 1; seen = 1; next }
+      $0 == e { skip = 0; next }
+      skip { next }
+      seen { post[++npost] = $0; next }
+      { pre[++npre] = $0 }
+      END {
+        while (npre > 0 && blank(pre[npre])) npre--
+        for (i = 1; i <= npre; i++) print pre[i]
+        if (npre > 0) print ""
+        print ENVIRON["BLOCK"]
+        for (j = 1; j <= npost && blank(post[j]); j++) ;
+        if (j <= npost) print ""
+        for (; j <= npost; j++) print post[j]
+      }' "$path"
   )
 }
 
