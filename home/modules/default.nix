@@ -13,6 +13,7 @@
     ./display.nix
     ./git.nix
     ./glow.nix
+    ./gnumake.nix
     ./idle.nix
     ./kbd-backlight.nix
     ./keyboard.nix
