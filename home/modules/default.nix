@@ -22,6 +22,7 @@
     ./neovim.nix
     ./night-light.nix
     ./nix.nix
+    ./playwright-cli.nix
     ./screenshots.nix
     ./session.nix
     ./shell.nix
