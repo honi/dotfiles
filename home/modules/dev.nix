@@ -5,6 +5,6 @@
 
   # Enable auto activation when you cd into a directory with a devenv.nix.
   programs.bash.initExtra = ''
-    eval "$(devenv hook bash -- --no-reload)"
+    eval "$(devenv hook bash -- --no-reload --no-tui)"
   '';
 }
