@@ -3,6 +3,12 @@
 {
   programs.git = {
     enable = true;
+    ignores = [
+      ".direnv"
+      ".devenv/"
+      "devenv.lock"
+      "devenv.nix"
+    ];
     settings = {
       user = {
         name = "Joni Bekenstein";
@@ -32,7 +38,6 @@
         rs = "restore --staged";
       };
       core = {
-        excludesfile = "~/.gitignore";
         autocrlf = "input";
         ignorecase = false;
       };
