@@ -149,6 +149,16 @@ all_installed() {
 }
 verify_installed() { verify "installed: $*" all_installed "$@"; }
 
+# block_present PATH NAME: PATH holds one "# BEGIN NAME" line followed by one
+# "# END NAME" line, as put_block writes them.
+block_present() {
+  awk -v b="# BEGIN $2" -v e="# END $2" '
+    $0 == b { nb++; if (!ne) open = 1 }
+    $0 == e { ne++; if (open) closed = 1; open = 0 }
+    END { exit !(nb == 1 && ne == 1 && closed) }' "$1"
+}
+verify_block() { verify "block $2 in $1" block_present "$1" "$2"; }
+
 # backports_current PKG...: the packages are at the version apt would install
 # with -t trixie-backports (prints the ones it would still upgrade otherwise).
 # Other packages in apt's plan don't count: it can also upgrade installed
