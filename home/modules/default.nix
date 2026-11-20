@@ -11,6 +11,7 @@
     ./direnv.nix
     ./disk-space-check.nix
     ./display.nix
+    ./gh.nix
     ./git.nix
     ./glow.nix
     ./gnumake.nix
