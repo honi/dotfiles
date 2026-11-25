@@ -18,6 +18,7 @@
     ./glow.nix
     ./gnumake.nix
     ./idle.nix
+    ./jq.nix
     ./json-merge.nix
     ./kbd-backlight.nix
     ./keyboard.nix
@@ -37,6 +38,7 @@
     ./terminal.nix
     ./theme.nix
     ./xresources.nix
+    ./yq.nix
   ];
 
   home.username = "jb";
