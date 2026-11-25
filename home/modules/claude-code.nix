@@ -23,6 +23,11 @@
     url = "https://mcp.atlassian.com/v2/mcp";
   };
 
+  claude.mcpServers.google-sheets = {
+    type = "http";
+    url = "https://sheetsmcp.googleapis.com/mcp/v1";
+  };
+
   home.file.".claude/statusline-command.sh" = {
     source = ../files/claude-statusline.sh;
     executable = true;
