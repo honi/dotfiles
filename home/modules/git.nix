@@ -8,6 +8,7 @@
       ".devenv/"
       "devenv.lock"
       "devenv.nix"
+      ".playwright-cli/"
     ];
     settings = {
       user = {
