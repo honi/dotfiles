@@ -8,6 +8,7 @@
     ./bluetooth.nix
     ./chromium-trust.nix
     ./claude-code.nix
+    ./claude-options.nix
     ./dev.nix
     ./direnv.nix
     ./disk-space-check.nix
@@ -17,6 +18,7 @@
     ./glow.nix
     ./gnumake.nix
     ./idle.nix
+    ./json-merge.nix
     ./kbd-backlight.nix
     ./keyboard.nix
     ./lazygit.nix
