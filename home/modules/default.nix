@@ -6,6 +6,7 @@
     ./autostart.nix
     ./bitwarden-cli.nix
     ./bluetooth.nix
+    ./chromium-trust.nix
     ./claude-code.nix
     ./dev.nix
     ./direnv.nix
