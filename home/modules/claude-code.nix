@@ -45,13 +45,31 @@ in
   };
 
   config = {
-    # Claude Code is installed from the stable channel, so the update notice
-    # checks stable too.
-    claude.settings.autoUpdatesChannel = "stable";
+    claude.settings = {
+      # Claude Code is installed from the stable channel, so the update notice
+      # checks stable too.
+      autoUpdatesChannel = "stable";
+      theme = "dark";
+      env.ENABLE_CLAUDEAI_MCP_SERVERS = "false";
+      enabledPlugins = {
+        "gopls-lsp@claude-plugins-official" = true;
+        "typescript-lsp@claude-plugins-official" = true;
+      };
+      statusLine = {
+        type = "command";
+        command = "~/.claude/statusline-command.sh";
+        refreshInterval = 5;
+      };
+    };
 
-    home.file = lib.mapAttrs' (
-      name: text: lib.nameValuePair ".claude/rules/${name}.md" { inherit text; }
-    ) cfg.rules;
+    home.file =
+      lib.mapAttrs' (name: text: lib.nameValuePair ".claude/rules/${name}.md" { inherit text; }) cfg.rules
+      // {
+        ".claude/statusline-command.sh" = {
+          source = ../files/claude-statusline.sh;
+          executable = true;
+        };
+      };
 
     home.activation.claudeCodeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       file="$HOME/.claude/settings.json"
