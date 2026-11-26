@@ -1,8 +1,9 @@
 # Idle: no suspend while audio plays, no dimming during fullscreen video.
 #
 # Regolith's idle daemon (regolith-powerd, through swayidle) dims the screen
-# after 5 minutes, turns it off and locks, and suspends after 15. Audio
-# doesn't count as activity.
+# after 5 minutes, turns it off and locks, and suspends after 15 on battery.
+# On AC it never suspends on idle (sleep-inactive-ac-type is "nothing"); the
+# dim, screen-off and lock still happen. Audio doesn't count as activity.
 #
 # A user service holds a logind sleep inhibitor while audio plays, which
 # refuses the idle suspend but leaves the dim, screen-off and lock alone.
@@ -35,6 +36,8 @@ in
     };
     Install.WantedBy = [ "graphical-session.target" ];
   };
+
+  dconf.settings."org/gnome/settings-daemon/plugins/power".sleep-inactive-ac-type = "nothing";
 
   xdg.configFile."regolith3/sway/config.d/60_idle".text = ''
     for_window [all] inhibit_idle fullscreen

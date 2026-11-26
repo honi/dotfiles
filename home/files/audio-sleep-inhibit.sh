@@ -12,7 +12,8 @@
 # playback isn't tried again when the music ends. To make up for it, once
 # audio stops while the screen is locked, this suspends the machine as soon
 # as the lock is older than the idle suspend time (by then swayidle has
-# already tried). Unlocking, or any suspend in between, cancels that.
+# already tried). Unlocking, or any suspend in between, cancels that. On AC
+# power the machine never suspends on idle, so this does nothing.
 
 set -uo pipefail
 
@@ -60,6 +61,8 @@ while true; do
     if [[ -n "$armed" ]]; then
       age="$(lock_age)"
       if [[ -z "$age" || "$(cat "$stats")" != "$armed" ]]; then
+        armed=""
+      elif on_ac_power; then
         armed=""
       elif (( age >= suspend_after )); then
         armed=""
