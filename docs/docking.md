@@ -8,7 +8,7 @@ M720 channels: 1 is the Unifying receiver (one receiver serves every OS); 2 and 
 
 ## Ports
 
-Connect the laptop to the Dell's Thunderbolt upstream port. The keyboard, the Unifying receiver and the webcam go on the Dell's USB-A ports. Plug the Unifying receiver into the USB-A port next to the ethernet port to avoid interference. The Dell's USB sits behind a Thunderbolt tunnel, so it works only once the OS is running: to pick an OS at the boot menu or type the disk passphrase, use the laptop's own keyboard with the lid open.
+Connect the laptop to the Dell's Thunderbolt upstream port. The keyboard, the Unifying receiver and the webcam go on the Dell's USB-A ports. Plug the Unifying receiver into the USB-A port next to the ethernet port to avoid interference. The firmware opens the Thunderbolt tunnel before the OS starts, so the Dell's keyboard works at the boot menu and the disk passphrase prompt, with the lid open or closed. Both screens show the same mirrored image there, at one fixed resolution.
 
 Wake from suspend: a key on the Dell-attached keyboard wakes the laptop; the mouse doesn't.
 
