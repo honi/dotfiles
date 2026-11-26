@@ -8,6 +8,9 @@
 # laptop's by a point, and using it switches the headset to its low-quality
 # call mode, so its priority is lowered below both.
 #
+# A microphone with no saved volume starts at 0.512 (0.8 in wpctl, which is
+# cubic: 0.8^3, about -6 dB). At full gain the laptop's microphone clips speech.
+#
 # A PipeWire filter-chain adds "Noise suppressed mic", a copy of the default
 # microphone run through the DeepFilterNet plugin, which removes keyboard
 # clicks, background noise and some room reverb. Its priority is above the real
@@ -41,6 +44,12 @@
         }
       }
     ]
+  '';
+
+  xdg.configFile."wireplumber/wireplumber.conf.d/51-microphone-volume.conf".text = ''
+    wireplumber.settings = {
+      device.routes.default-source-volume = 0.512
+    }
   '';
 
   xdg.configFile."pipewire/pipewire.conf.d/51-noise-suppressed-mic.conf".text = ''
