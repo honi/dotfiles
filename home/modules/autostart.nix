@@ -8,6 +8,10 @@
 # goes in ~/.local/share/systemd/user, not ~/.config: Home Manager restarts
 # units whose files change there on switch, and restarting this one would
 # end the session.
+#
+# An autostart file of the same name in ~/.config/autostart with Hidden=true
+# turns off a packaged entry for this user. Solaar's tray icon is off this way;
+# it runs when started by hand.
 { config, ... }:
 let
   script = ".local/bin/publish-display-env";
@@ -17,6 +21,13 @@ in
     executable = true;
     source = ../files/publish-display-env.sh;
   };
+
+  xdg.configFile."autostart/solaar.desktop".text = ''
+    [Desktop Entry]
+    Type=Application
+    Name=Solaar
+    Hidden=true
+  '';
 
   xdg.dataFile."systemd/user/regolith-wayland.service.d/publish-display-env.conf".text = ''
     [Service]
