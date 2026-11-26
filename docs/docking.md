@@ -16,16 +16,6 @@ Wake from suspend: a key on the Dell-attached keyboard wakes the laptop; the mou
 
 A short passive Thunderbolt 4 cable (under 0.8 m) works well. Other cables can be hit or miss: a 0.8 m one failed link training here (tunnel setup errors and a reconnect loop every few seconds in the kernel log).
 
-## Thunderbolt
-
-Each OS keeps its own boltd store. In every OS, enroll the monitor once:
-
-```
-boltctl enroll --policy iommu <uuid>
-```
-
-(`boltctl list` shows the uuid.)
-
 ## BIOS
 
 Set a battery charge limit (for example 80%): docked on AC, the laptop never suspends on idle.
