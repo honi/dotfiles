@@ -27,6 +27,13 @@
     "wm.hide.edge.borders" = "none";
     "wm.gaps.inner.size" = "8";
     "wm.gaps.outer.size" = "0";
+
+    # Border of the last-focused window in an unfocused container: the
+    # look's purple (#bd93f9) at half brightness, so the focused window is
+    # the only one with the full purple.
+    "wm.client.focused_inactive.color.border" = "#5e497c";
+    "wm.client.focused_inactive.color.indicator" = "#5e497c";
+    "wm.client.focused_inactive.color.child_border" = "#5e497c";
   };
 
   # Dark mode. The desktop-wide color-scheme preference, read by apps that
