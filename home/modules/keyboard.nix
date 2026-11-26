@@ -3,12 +3,13 @@
 {
   # Layout. regolith-inputd applies keyboard settings to Sway and reads the
   # layout from GNOME's input-sources list; an empty list (a fresh account)
-  # makes it fail. Each entry is a (type, layout) pair; xkb "us" is the US
-  # layout.
+  # makes it fail. Each entry is a (type, layout) pair; xkb "us+altgr-intl"
+  # is the US layout with accented letters on Right Alt (AltGr+e = é,
+  # AltGr+n = ñ, AltGr+/ = ¿) and no dead keys.
   dconf.settings."org/gnome/desktop/input-sources".sources = [
     (lib.hm.gvariant.mkTuple [
       "xkb"
-      "us"
+      "us+altgr-intl"
     ])
   ];
 
