@@ -24,6 +24,7 @@
     ./keyboard.nix
     ./lazygit.nix
     ./lock-screen.nix
+    ./microphone.nix
     ./neovim.nix
     ./night-light.nix
     ./nix.nix
