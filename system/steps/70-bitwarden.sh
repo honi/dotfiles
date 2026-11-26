@@ -3,7 +3,8 @@
 #
 # bitwarden.com's download link redirects to the .deb of the current release
 # on GitHub (bitwarden/clients), in a URL that names the version, which
-# matches the package's own version. The step reads it from the redirect,
+# matches the package's own version. The release also holds an "oss-" build;
+# the link serves the "bit-" one, and that's the one accepted. The step reads it from the redirect,
 # only accepts a redirect to that repository's desktop release, and downloads
 # only when the installed version differs, so running the step again updates
 # Bitwarden.
@@ -18,7 +19,7 @@
 # read, so its dependencies come along.
 
 url='https://bitwarden.com/download/?app=desktop&platform=linux&variant=deb'
-release_re='^https://github\.com/bitwarden/clients/releases/download/desktop-v([0-9.]+)/Bitwarden-([0-9.]+)-amd64\.deb$'
+release_re='^https://github\.com/bitwarden/clients/releases/download/desktop-v([0-9.]+)/bit-Bitwarden-([0-9.]+)-amd64\.deb$'
 
 apt_install jq
 
