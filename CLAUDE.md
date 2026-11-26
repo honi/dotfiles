@@ -17,6 +17,7 @@
 
 - Philosophy: build the system from the ground up, with explicit steps stating what we want. Avoid patches that fix or undo what an earlier step did (purging, masking, overriding). Find the root cause and fix it there, such as the install order, a missing package or the wrong dependency.
 
+- A step installs the packages it needs and configures them. Don't install a package in one step and set it up in another; `00-base-packages` is only for packages that need no set up.
 - Step numbers order groups, not steps: steps that share a number must not depend on each other. Give a step its own number only when it depends on an earlier group.
 - Config files: install whole files from `files/` or use `.d` drop-ins. Don't edit existing files in place with `sed`/`awk`/`>>`. The exception is a file the installer generates that has no drop-in mechanism (`/etc/hosts`): keep one marked block in it with `put_block`.
 - Every step, module and file describes only itself: what it does, and why only for real edge cases, kept generic. No references to other steps, modules or docs, and no history of past iterations or fixes.
