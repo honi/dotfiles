@@ -1,0 +1,4 @@
+#!/bin/sh
+# Exits 0 when the laptop lid is closed, non-zero otherwise (including when
+# the machine has no lid switch).
+grep -qsw closed /proc/acpi/button/lid/*/state

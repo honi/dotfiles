@@ -1,0 +1,6 @@
+Name: Skip fingerprint while the lid is closed
+Default: no
+Priority: 270
+Auth-Type: Primary
+Auth:
+	[success=1 default=ignore]	pam_exec.so quiet /usr/local/bin/lid-closed
