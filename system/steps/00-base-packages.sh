@@ -10,7 +10,6 @@ apt_install \
   btop \
   iotop \
   tree \
-  rsync \
-  unattended-upgrades
+  rsync
 
-verify_installed wget gpg ca-certificates bind9-dnsutils htop btop iotop tree rsync unattended-upgrades
+verify_installed wget gpg ca-certificates bind9-dnsutils htop btop iotop tree rsync
