@@ -1,4 +1,4 @@
-# The bar: status blocks, position and tray menu colors.
+# The bar: status blocks, position, workspace names and tray menu colors.
 #
 # Regolith's bar runs i3status-rust with the file named by
 # wm.bar.status_config. Edits to the TOML apply on a Sway reload
@@ -66,6 +66,17 @@ in
       # its blocks), which makes menu text dark on dark. Dracula's foreground
       # fixes it.
       "wm.bar.statusline.color" = "#f8f8f2";
-    };
+    }
+    # Workspace buttons show only the number. The text after "N:" is Pango
+    # markup; the spans keep the padding spaces from being trimmed.
+    // lib.listToAttrs (
+      map (
+        n:
+        let
+          i = toString n;
+        in
+        lib.nameValuePair "wm.workspace.${lib.fixedWidthNumber 2 n}.name" "${i}:<span> </span>${i}<span> </span>"
+      ) (lib.range 1 19)
+    );
   };
 }
