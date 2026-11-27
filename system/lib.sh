@@ -303,9 +303,10 @@ backup_once() {
 fetch_keyring() {
   local url="$1" dest="$2" tmp
   tmp="$(mktemp)"
-  wget -qO- "$url" | gpg --dearmor > "$tmp"
+  wget -q -O "$tmp.key" "$url" || { rm -f "$tmp" "$tmp.key"; fail "could not download $url"; }
+  gpg --dearmor < "$tmp.key" > "$tmp" || { rm -f "$tmp" "$tmp.key"; fail "$url is not an OpenPGP key"; }
   write_file "$dest" 0644 < "$tmp"
-  rm -f "$tmp"
+  rm -f "$tmp" "$tmp.key"
 }
 
 # summary ---------------------------------------------------------------------
