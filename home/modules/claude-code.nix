@@ -6,7 +6,6 @@
     # checks stable too.
     autoUpdatesChannel = "stable";
     theme = "dark-ansi";
-    env.ENABLE_CLAUDEAI_MCP_SERVERS = "false";
     enabledPlugins = {
       "gopls-lsp@claude-plugins-official" = true;
       "typescript-lsp@claude-plugins-official" = true;
@@ -21,11 +20,6 @@
   claude.mcpServers.atlassian = {
     type = "http";
     url = "https://mcp.atlassian.com/v2/mcp";
-  };
-
-  claude.mcpServers.google-sheets = {
-    type = "http";
-    url = "https://sheetsmcp.googleapis.com/mcp/v1";
   };
 
   home.file.".claude/statusline-command.sh" = {
