@@ -29,6 +29,7 @@
     ./night-light.nix
     ./nix.nix
     ./playwright-cli.nix
+    ./ripgrep.nix
     ./screenshots.nix
     ./session.nix
     ./shell.nix
