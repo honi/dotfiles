@@ -10,6 +10,7 @@ apt_install \
   btop \
   iotop \
   tree \
-  rsync
+  rsync \
+  wev
 
-verify_installed wget gpg ca-certificates bind9-dnsutils htop btop iotop tree rsync
+verify_installed wget gpg ca-certificates bind9-dnsutils htop btop iotop tree rsync wev
