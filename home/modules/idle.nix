@@ -11,17 +11,40 @@
 # Regolith's sway-audio-idle-inhibit blocks every idle step while audio
 # plays, the lock included, so it's masked (linked to /dev/null).
 #
+# Calls: a second user service keeps the screen on (no dim, screen-off, lock
+# or suspend) while any app records from a microphone, by setting a Sway idle
+# inhibitor on every window. It works for any app, not only a browser.
+#
 # Video: any fullscreen window keeps the screen on (no dim, screen-off, lock
 # or suspend), as a Sway rule. It applies to windows opened after a Sway
 # reload.
 { config, ... }:
 let
   script = ".local/bin/audio-sleep-inhibit";
+  callScript = ".local/bin/call-idle-inhibit";
 in
 {
   home.file.${script} = {
     executable = true;
     source = ../files/audio-sleep-inhibit.sh;
+  };
+
+  home.file.${callScript} = {
+    executable = true;
+    source = ../files/call-idle-inhibit.sh;
+  };
+
+  systemd.user.services.call-idle-inhibit = {
+    Unit = {
+      Description = "Keep the screen on while a microphone is recording";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${config.home.homeDirectory}/${callScript}";
+      Restart = "on-failure";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
   };
 
   systemd.user.services.audio-sleep-inhibit = {
