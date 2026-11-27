@@ -5,7 +5,7 @@
     # Claude Code is installed from the stable channel, so the update notice
     # checks stable too.
     autoUpdatesChannel = "stable";
-    theme = "dark";
+    theme = "dark-ansi";
     env.ENABLE_CLAUDEAI_MCP_SERVERS = "false";
     enabledPlugins = {
       "gopls-lsp@claude-plugins-official" = true;
